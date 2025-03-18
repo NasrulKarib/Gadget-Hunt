@@ -4,6 +4,7 @@
 ## Key Features
 
 - **Product Discovery**: Browse, search, filter, and sort gadgets based on preferences.
+- **Customer Reviews**: Leave ratings and reviews for purchased products.
 - **Seamless Shopping**: Add products to the cart, choose between **Cash on Delivery (COD)** or online payments (**Bkash, Nagad**), and confirm orders.
 - **Order Tracking**: Track orders after confirmation.
 - **Admin Dashboard**:
