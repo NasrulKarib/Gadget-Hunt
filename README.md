@@ -1,5 +1,5 @@
 # GadgetHunt
-**GadgetHunt** is an online marketplace for smart gadgets, offering the latest and hottest devices, including smartphones, tablets, TWS earbuds, and neckbands.
+**GadgetHunt** is an online marketplace for smart gadgets, offering the latest and hottest devices, including smartphones, tablets, TWS earbuds, neckbands etc.
 
 ## Key Features
 
