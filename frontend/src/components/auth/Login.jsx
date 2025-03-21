@@ -2,6 +2,9 @@ import React, { useState } from 'react';
 import { Mail, Lock, Eye, EyeOff, ArrowRight, AlertCircle } from 'lucide-react';
 import { FcGoogle } from 'react-icons/fc';
 import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -11,17 +14,51 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleLogin = (e) => {
+  const handleLogin = async(e) => {
     e.preventDefault();
     setLoading(true);
-    // Backend integration will go here
-    setTimeout(() => {
+    setError('');
+    
+    try{
+      const response = await axios.post('http://localhost:8000/api/users/login/',{
+        email,
+        password,
+      },{withCredentials: true});
+
+      const {message, user} = response.data;
+      localStorage.setItem('userId', user.id );
       setLoading(false);
-      // For now just simulate success
-      console.log('Login attempt with:', { email, password });
-      // After successful login, navigate to home
-      // navigate('/');
-    }, 1000);
+
+      toast.success(message,{
+        position: "top-center",
+        autoClose: 3000,
+        hideProgressBar: false,
+      });
+
+      setTimeout(() => {
+        navigate('/');
+      }, 3000);
+    }
+    catch(err){
+      setLoading(false);
+      if(err.response && err.response.data){
+        console.log(err.response.data.detail);
+        toast.error("Login failed! Invalid Email or Password",{
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: false,
+        })
+      }
+      else{
+        //console.log(err.message);
+        setError("Network Issue!");
+        toast.error("Network error! Please try again later.",{
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: false,
+        })
+      }
+    }
   };
 
   const handleGoogleLogin = () => {

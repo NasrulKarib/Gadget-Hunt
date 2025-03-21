@@ -2,6 +2,9 @@ import React, { useState } from 'react';
 import { Mail, Lock, User, Eye, EyeOff, ArrowRight, AlertCircle, CheckCircle } from 'lucide-react';
 import { FcGoogle } from 'react-icons/fc';
 import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Signup = () => {
   const [formData, setFormData] = useState({
@@ -36,19 +39,50 @@ const Signup = () => {
     return true;
   };
 
-  const handleSignup = (e) => {
+  const handleSignup = async (e) => {
     e.preventDefault();
     if (!validatePassword()) return;
     
     setLoading(true);
-    // Backend integration will go here
-    setTimeout(() => {
+    setError('');
+    try{
+      const response = await axios.post('http://localhost:8000/api/users/signup/', {
+        name: formData.name,
+        email: formData.email,
+        password: formData.password,
+        role: formData.role // Default to 'Customer'
+      });
+
+      const {user} = response.data;
+      localStorage.setItem('userId', user.id);
       setLoading(false);
-      // For now just simulate success
-      console.log('Signup attempt with:', formData);
-      // After successful signup, navigate to login or home
-      // navigate('/login');
-    }, 1000);
+      
+      toast.success('Signup successful! Redirecting to login...',{
+        position: "top-center",
+        autoClose: 3000,
+        hideProgressBar: false,
+      });
+      navigate('/login');
+    }
+    catch(err){
+      setLoading(false);
+      if (err.response && err.response.data) {
+        console.log(err.response.data);
+        toast.error("Signup failed. Please try again.",{
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: false,
+        });
+      } else {
+        toast.error("Network Error! Please try again later.",{
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: false,
+        });
+      }
+      
+      
+    }
   };
 
   const handleGoogleSignup = () => {
