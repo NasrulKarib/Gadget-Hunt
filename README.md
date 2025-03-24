@@ -17,6 +17,15 @@ GadgetHunt ensures a smooth and efficient shopping experience for tech enthusias
 
 **Live Demo**: will be available soon..
 
+## Technologies Used
+
+| Component      | Technology | Description |
+|--------------|------------|-------------|
+| **Frontend**  | React      | A JavaScript library for building interactive user interfaces. |
+| **Backend**   | Django     | A high-level Python web framework for rapid and secure development. |
+| **Database**  | PostgreSQL | A powerful, open-source relational database system. |
+| **Version Control** | GitHub | A platform for managing and collaborating on code using Git. |
+
 ## ER Diagram
 ![ER Diagram](GadgetHunt.png)
 ### Database Schema
