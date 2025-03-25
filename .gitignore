@@ -23,3 +23,6 @@ frontend/.vscode/
 frontend/.idea/
 frontend/.DS_Store
 frontend/Thumbs.db
+
+venv
+backend/.env

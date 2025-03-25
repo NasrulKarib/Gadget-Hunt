@@ -7,29 +7,28 @@ import Signup from '../components/auth/Signup';
 import HeroSection from '../components/main/HeroSections';
 import FeaturedCategories from '../components/main/FeatureCategories';
 import ProductCard from '../components/main/ProductCard';
-
-
-
+import BrandMarquee from '../components/main/BrandMarquee';
+import UserProfile from '../components/userProfile/UserProfile';
 const HomePage = () => (
-  <>
+  <div className="w-full">
     <HeroSection />
     <FeaturedCategories />
     <ProductCard />
-    {/* Add other homepage components here */}
-  </>
+    <BrandMarquee />
+  </div>
 );
 
 const AppRoutes = () => {
   return (
     <Router>
-      <div className="flex flex-col min-h-screen">
+      <div className="flex flex-col min-h-screen w-full">
         <Header />
-        <main className="flex-grow">
+        <main className="flex-grow w-full">
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
-            {/* Add other routes as needed */}
+            <Route path="/profile" element={<UserProfile />} />
           </Routes>
         </main>
         <Footer />
