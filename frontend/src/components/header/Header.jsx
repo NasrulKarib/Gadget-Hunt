@@ -17,12 +17,10 @@ const Header = () => {
         <div className="container mx-auto px-4">
           {/* Top Header */}
           <div className="flex items-center justify-between py-4">
-            <div className="flex items-center space-x-2">
-              <Link to="/" className="flex items-center space-x-2">
-                <span className="text-2xl font-bold text-orange-500">Gadget</span>
-                <span className="text-2xl font-bold">Hunt</span>
-              </Link>
-            </div>
+            <Link to="/" className="flex items-center space-x-2">
+              <span className="text-2xl font-bold text-orange-500">Gadget</span>
+              <span className="text-2xl font-bold">Hunt</span>
+            </Link>
             
             {/* Search Bar - Hidden on mobile, shown on tablet and up */}
             <div className="hidden md:flex flex-1 max-w-2xl mx-8">
@@ -54,16 +52,13 @@ const Header = () => {
                 </div>
               </div>
               
-              <div 
-                className="flex items-center space-x-2 cursor-pointer"
-                onClick={handleAccountClick}
-              >
+              <Link to="/login" className="flex items-center space-x-2">
                 <User size={24} />
                 <div className="hidden sm:block">
                   <div className="text-sm">Account</div>
                   <div className="text-xs text-gray-300">Register or Login</div>
                 </div>
-              </div>
+              </Link>
             </div>
 
             {/* Mobile Menu Button */}
@@ -97,21 +92,18 @@ const Header = () => {
               <ShoppingCart size={24} />
               <span>Cart (0)</span>
             </div>
-            <div 
-              className="flex items-center space-x-2 px-4 py-2 hover:bg-gray-800 cursor-pointer"
-              onClick={handleAccountClick}
-            >
+            <Link to="/login" className="flex items-center space-x-2 px-4 py-2 hover:bg-gray-800">
               <User size={24} />
               <span>Account</span>
-            </div>
+            </Link>
           </div>
         </div>
       </header>
       
       {/* Navigation Menu - Fixed with white background and shadow */}
       <nav className="sticky top-0 z-50 bg-white shadow-md">
-        <div className="container mx-auto">
-          <div className="overflow-x-auto">
+        <div className="container  mx-auto">
+          <div className="overflow-x-auto ">
             <ul className="flex justify-center space-x-8 min-w-max px-4 py-3">
               <li className="text-gray-700 hover:text-orange-500 cursor-pointer whitespace-nowrap">Phones & Tablets</li>
               <li className="text-gray-700 hover:text-orange-500 cursor-pointer whitespace-nowrap">Laptop & Desktop</li>
