@@ -1,9 +1,11 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from .models import Users
 from .serializers import UserSerializer, UserLoginSerializer
-from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework.permissions import AllowAny
+from rest_framework_simplejwt.tokens import RefreshToken, AccessToken
+from rest_framework_simplejwt.exceptions import TokenError, InvalidToken
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
@@ -81,6 +83,15 @@ class LoginView(APIView):
                     type=openapi.TYPE_OBJECT,
                     properties={
                         'message': openapi.Schema(type=openapi.TYPE_STRING, description='Login successful'),
+                        'user': openapi.Schema(
+                            type=openapi.TYPE_OBJECT,
+                            properties={
+                                'id': openapi.Schema(type=openapi.TYPE_INTEGER),
+                                'email': openapi.Schema(type=openapi.TYPE_STRING),
+                                'name': openapi.Schema(type=openapi.TYPE_STRING),
+                                'role': openapi.Schema(type=openapi.TYPE_STRING),
+                            }
+                        )
                     }
                 )
             ),
@@ -93,9 +104,16 @@ class LoginView(APIView):
         if serializer.is_valid():
             user = serializer.validated_data['user']
             refresh = RefreshToken.for_user(user)
+            refresh["role"] = user.role
+
             response =  Response({
                 "message": "Login successful",
-                "user": { "id": user.id}
+                "user": { 
+                    "id": user.id,
+                    "email": user.email,
+                    "name": user.name,
+                    "role": user.role,
+                }
             }, status=status.HTTP_200_OK)
 
             response.set_cookie(
@@ -117,3 +135,51 @@ class LoginView(APIView):
             return response 
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+class UserProfileView(APIView):
+
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        role = request.auth.payload.get('role')
+
+        return Response({
+            "id": user.id,
+            "email": user.email,
+            "name": user.name,
+            "role": role
+        }, status=status.HTTP_200_OK)
+    
+class AdminDashboardView(APIView):
+
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = Users.objects.get(id=request.user.id)
+        role = user.role
+
+        if role!="Admin":
+            return Response({"message": "Admin Access required"}, status=status.HTTP_401_UNAUTHORIZED)
+        
+        return Response({"message":"Welcome to Admin Dashboard"},status=status.HTTP_200_OK)
+    
+class ValidateToken(APIView):
+    def get(self, request):
+        access_token = request.COOKIES.get('access_token')
+
+        if not access_token:
+            return Response({"message":"No access token provided"},status=status.HTTP_400_BAD_REQUEST)
+        
+        try:
+            token = AccessToken(access_token)
+            payload = token.payload
+            return Response(
+                {
+                    "message":"Token is valid",
+                    "payload": payload
+                }, status=status.HTTP_200_OK
+            )
+        except(InvalidToken, TokenError) as e:
+            return Response({"message":str(e)},status=status.HTTP_400_BAD_REQUEST)
+            

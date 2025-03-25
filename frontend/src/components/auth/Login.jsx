@@ -26,37 +26,23 @@ const Login = () => {
       },{withCredentials: true});
 
       const {message, user} = response.data;
-      localStorage.setItem('userId', user.id );
+      localStorage.setItem('userinfo', JSON.stringify(user));
       setLoading(false);
 
-      toast.success(message,{
-        position: "top-center",
-        autoClose: 3000,
-        hideProgressBar: false,
-      });
-
-      setTimeout(() => {
-        navigate('/');
-      }, 3000);
+      toast.success(message,);
+      navigate('/');
+     
     }
     catch(err){
       setLoading(false);
       if(err.response && err.response.data){
         console.log(err.response.data.detail);
-        toast.error("Login failed! Invalid Email or Password",{
-          position: "top-center",
-          autoClose: 3000,
-          hideProgressBar: false,
-        })
+        toast.error("Login failed! Invalid Email or Password")
       }
       else{
         //console.log(err.message);
         setError("Network Issue!");
-        toast.error("Network error! Please try again later.",{
-          position: "top-center",
-          autoClose: 3000,
-          hideProgressBar: false,
-        })
+        toast.error("Network error! Please try again later.")
       }
     }
   };
