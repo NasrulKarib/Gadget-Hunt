@@ -3,6 +3,8 @@ import { ChevronLeft, ChevronRight, Tag, Percent } from 'lucide-react';
 import samsung from '../../assets/s25.jpg';
 import iphone from '../../assets/iphone16.jpg';
 import pixel from '../../assets/pixel.jpg';
+import appleWatch from '../../assets/apple-watch.jpg';
+import sony from '../../assets/sony-headphones.jpg';
 
 const HeroSection = () => {
   const slides = [
@@ -28,6 +30,16 @@ const HeroSection = () => {
     }
   ];
 
+  const advertisement = [
+    {
+      name: "Apple Watch",
+      image: appleWatch,
+    },
+    {
+      name: "Sony Headphones",
+      image: sony,
+    }
+  ]
   const offers = [
     {
       title: "Student Discount",
@@ -68,8 +80,9 @@ const HeroSection = () => {
   }, []);
 
   return (
-    <div className="bg-gray-100 py-6">
-      <div className="container mx-auto">
+    <div className="bg-white py-6">
+      <div className="container mx-auto space-y-6">
+        {/* Main section with slider and advs */}
         <div className="flex flex-col lg:flex-row gap-6">
           {/* Left Side - Slider */}
           <div className="lg:w-2/3">
@@ -137,12 +150,31 @@ const HeroSection = () => {
             </div>
           </div>
 
-          {/* Right Side - Offers */}
-          <div className="lg:w-1/3 space-y-4">
-            {offers.map((offer, index) => (
+          {/* Right Side - Advertisements */}
+          <div className="lg:w-1/3 space-y-6">
+                {advertisement.map((ad, index) => (
+                  <div 
+                    key={index} 
+                    className="overflow-hidden rounded-xl relative h-[190px] cursor-pointer"
+                  >
+                    <img 
+                      src={ad.image} 
+                      alt={ad.name} 
+                      className="absolute w-full h-full object-cover rounded-t-xl"
+                    />
+                  </div>
+                ))}
+
+          </div>
+            
+        </div>
+          
+        {/* Offers Section */}
+        <div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
+          {offers.map((offer, index) => (
               <div 
                 key={index}
-                className="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition cursor-pointer"
+                className="bg-white p-6 rounded-xl shadow-sm hover:shadow-lg transition cursor-pointer"
               >
                 <div className="flex items-start space-x-4">
                   <div className="p-3 bg-orange-100 rounded-lg">
@@ -154,8 +186,8 @@ const HeroSection = () => {
                   </div>
                 </div>
               </div>
-            ))}
-          </div>
+            ))} 
+
         </div>
       </div>
     </div>
