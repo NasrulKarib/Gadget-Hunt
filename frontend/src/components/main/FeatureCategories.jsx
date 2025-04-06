@@ -23,10 +23,10 @@ const FeaturedCategories = () => {
           {categories.map((category, index) => (
             <div
               key={index}
-              className="flex flex-col items-center p-4 bg-gray-50 rounded-lg shadow-sm hover:shadow-md transition cursor-pointer"
+              className="flex flex-col justify-center items-center text-center p-4 bg-gray-50 rounded-lg shadow-sm hover:shadow-md transition cursor-pointer"
             >
               <category.icon size={32} className="text-gray-700 mb-3" />
-              <span className="text-sm text-center">{category.name}</span>
+              <span className="text-sm ">{category.name}</span>
             </div>
           ))}
         </div>
