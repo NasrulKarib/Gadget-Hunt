@@ -32,6 +32,7 @@ INSTALLED_APPS = [
     'users',
     'products',
     'orders',
+    'backend',
     'corsheaders',
     'drf_yasg'
 ]

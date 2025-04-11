@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState , useEffect} from 'react';
 import { Mail, Lock, User, Eye, EyeOff, ArrowRight, AlertCircle, CheckCircle } from 'lucide-react';
 import { FcGoogle } from 'react-icons/fc';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { auth, googleProvider } from '../../firebase';
+import { signInWithPopup } from 'firebase/auth';
 
 const Signup = () => {
   const [formData, setFormData] = useState({
@@ -85,9 +87,40 @@ const Signup = () => {
     }
   };
 
-  const handleGoogleSignup = () => {
-    // Google authentication will be implemented here
-    console.log('Google signup clicked');
+ 
+
+  const handleGoogleSignup = async() => {
+   
+    setLoading(true);
+    try {
+      // Use signInWithPopup instead of signInWithRedirect
+      const result = await signInWithPopup(auth, googleProvider);
+      const user = result.user;
+      const idToken = await user.getIdToken();
+
+      // Send the ID token to the backend
+      const response = await axios.post('http://localhost:8000/api/users/firebase-signup/', {
+        id_token: idToken,
+      }, {
+        withCredentials: true,
+      });
+
+      const { user: userData } = response.data;
+      localStorage.setItem('user', JSON.stringify(userData));
+      toast.success('Signup successful');
+
+      setTimeout(() => {
+        if (userData.role === 'Admin') {
+          navigate('/admin-dashboard');
+        } else {
+          navigate('/');
+        }
+      }, 1000);
+    } catch (error) {
+      console.error('Google Signup Error:', error);
+      toast.error(`Signup failed: ${error.message}`);
+      setLoading(false);
+    }
   };
 
   return (

@@ -8,6 +8,8 @@ from rest_framework_simplejwt.exceptions import TokenError, InvalidToken
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
+from firebase_admin import auth
+import uuid
 
 # Create your views here.
 class SignupView(APIView):
@@ -183,3 +185,73 @@ class ValidateToken(APIView):
         except(InvalidToken, TokenError) as e:
             return Response({"message":str(e)},status=status.HTTP_400_BAD_REQUEST)
             
+class FirebaseLoginView(APIView):
+
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        id_token =  request.data.get('id_token')
+        if not id_token:
+            return Response({"message":"Id_token is required"},status=status.HTTP_400_BAD_REQUEST)
+        
+        try:
+            decode_token = auth.verify_id_token(id_token)
+            email = decode_token.get('email')
+            name = decode_token.get('name')
+
+            if not email:
+                return Response({"message":"Email is not found in token"},status=status.HTTP_400_BAD_REQUEST)
+
+            user, created = Users.objects.get_or_create(
+                email = email,
+                defaults = {
+                    'name': name,
+                    'password': str(uuid.uuid4()),  # Generate a random password
+                }
+            )
+
+            refresh = RefreshToken.for_user(user)
+            refresh["role"] = user.role
+
+            # Prepare response
+            response = Response({
+                "message": "Login successful",
+                "user": {
+                    "id": user.id,
+                    "email": user.email,
+                    "name": user.name,
+                    "role": user.role,
+                },
+            }, status=status.HTTP_200_OK)
+
+            response.set_cookie(
+                key='access_token',
+                value=str(refresh.access_token),
+                httponly=True,
+                secure=True,
+                samesite='Strict',
+                max_age=3600
+            )
+            response.set_cookie(
+                key='refresh_token',
+                value=str(refresh),
+                httponly=True,
+                secure=True,
+                samesite='Strict',
+                max_age=604800
+            )
+
+            return response
+        
+        except auth.InvalidIdTokenError:
+            return Response({'detail': 'Invalid ID token'}, status=status.HTTP_401_UNAUTHORIZED)
+        except Exception as e:
+            return Response({'detail': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+class FirebaseSignupView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        # For Firebase, signup and login can be handled similarly
+        # since Firebase creates the user on first sign-in
+        return FirebaseLoginView.as_view()(request)

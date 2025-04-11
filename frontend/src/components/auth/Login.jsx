@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Mail, Lock, Eye, EyeOff, ArrowRight, AlertCircle } from 'lucide-react';
 import { FcGoogle } from 'react-icons/fc';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import {auth, googleProvider} from '../../firebase' 
+import { signInWithPopup} from 'firebase/auth';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -47,9 +49,38 @@ const Login = () => {
     }
   };
 
-  const handleGoogleLogin = () => {
-    // Google authentication will be implemented here
-    console.log('Google login clicked');
+
+
+  const handleGoogleLogin = async () => {
+    setLoading(true);
+    try {
+      const result = await signInWithPopup(auth, googleProvider);
+      const user = result.user;
+      const idToken = await user.getIdToken();
+      
+      const response = await axios.post('http://localhost:8000/api/users/firebase-login/', {
+        id_token: idToken,
+      }, {
+        withCredentials: true,
+      });
+
+      const { user: userData } = response.data;
+      console.log('userData:', userData);
+      localStorage.setItem('user', JSON.stringify(userData));
+      toast.success('Login successful');
+
+      setTimeout(() => {
+        if (userData.role === 'Admin') {
+          navigate('/admin-dashboard');
+        } else {
+          navigate('/');
+        }
+      }, 2000);
+    } catch (error) {
+      console.error('Google Login Error:', error);
+      toast.error(`Login failed: ${error.message}`);
+      setLoading(false);
+    }
   };
 
   return (

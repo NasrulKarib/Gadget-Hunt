@@ -26,3 +26,4 @@ frontend/Thumbs.db
 
 venv
 backend/.env
+backend/backend/credentials
