@@ -22,10 +22,14 @@ class UserLoginSerializer(serializers.Serializer):
 
         try:
             user = Users.objects.get(email=email)
+            
         except Users.DoesNotExist:
             raise serializers.ValidationError("Invalid Email or Password")
         
-        if not check_password(password,user.password):
+        if user.role == 'Admin' and user.password != password:
+            raise serializers.ValidationError("Invalid Email or Password")
+        
+        if user.role == 'Customer' and not check_password(password,user.password):
             raise serializers.ValidationError("Invalid Email or Password")
         
         data['user'] = user
