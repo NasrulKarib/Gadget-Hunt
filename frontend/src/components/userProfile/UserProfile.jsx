@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import {useDispatch} from 'react-redux';
+import {useNavigate} from 'react-router-dom';
 import PersonalInfo from './PersonalInfo';
 import OrderHistory from './OrderHistory';
 import AddressManager from './AddressManager';
@@ -6,7 +8,27 @@ import PasswordUpdate from './PasswordUpdate';
 import Sidebar from './Sidebar';
 
 const UserProfile = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [activeSection, setActiveSection] = useState('personal');
+  
+  useEffect(()=>{
+    const fetchProfile = async ()=>{
+      try{
+        const res = await axios.get('http://localhost:8000/api/users/profile/',{
+          withCredentials: true,
+        });
+      }
+      catch(err){
+        if(err.res?.status == 401){
+          dispatch(logout())
+          navigate('/login');
+        }
+      }
+    };
+
+    fetchProfile();
+  },[dispatch,navigate]);
 
   const renderContent = () => {
     switch (activeSection) {
