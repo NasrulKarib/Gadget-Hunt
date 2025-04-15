@@ -23,7 +23,7 @@ const Header = () => {
 
   const handleLogout = () => {
     dispatch(logout()); // Clear Redux user
-    navigate('/login');
+    navigate('/');
     setIsMenuOpen(false);
   };
   return (
@@ -72,8 +72,8 @@ const Header = () => {
               <div className="flex items-center space-x-2 cursor-pointer" >
                 <User size={24} />
                 <div className="hidden sm:block">
-                  <div className="text-sm" onClick={handleAccountClick}>{user.name}</div>
-                  <div className="text-xs text-gray-300 pt-1 cursor-pointer" onClick={handleLogout}>
+                  <div className="text-sm hover:text-orange-500" onClick={handleAccountClick}>{user.name}</div>
+                  <div className="text-xs text-gray-300 pt-1  hover:text-orange-500 cursor-pointer" onClick={handleLogout}>
                     Logout
                   </div>
                 </div>
