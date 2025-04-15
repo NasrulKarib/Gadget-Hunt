@@ -1,85 +1,59 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Mail, Lock, Eye, EyeOff, ArrowRight, AlertCircle } from 'lucide-react';
 import { FcGoogle } from 'react-icons/fc';
 import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import {useDispatch, useSelector} from 'react-redux';
+import {loginUser, googleLogin} from '../../redux/slices/authSlices'
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import {auth, googleProvider} from '../../firebase' 
-import { signInWithPopup} from 'firebase/auth';
+import {signInWithPopup} from 'firebase/auth';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch();
   const navigate = useNavigate();
+  const {loading, error} = useSelector(state=> state.auth);
 
   const handleLogin = async(e) => {
     e.preventDefault();
-    setLoading(true);
-    setError('');
-    
-    try{
-      const response = await axios.post('http://localhost:8000/api/users/login/',{
-        email,
-        password,
-      },{withCredentials: true});
-
-      const {message, user} = response.data;
-      localStorage.setItem('userinfo', JSON.stringify(user));
-      setLoading(false);
-
-      toast.success(message,);
-      navigate('/');
-     
-    }
-    catch(err){
-      setLoading(false);
-      if(err.response && err.response.data){
-        console.log(err.response.data.detail);
-        toast.error("Login failed! Invalid Email or Password")
-      }
-      else{
-        //console.log(err.message);
-        setError("Network Issue!");
-        toast.error("Network error! Please try again later.")
-      }
+    const result = await dispatch(loginUser({ email, password }));
+    if (loginUser.fulfilled.match(result)) {
+      toast.success('Login successful');
+      setTimeout(()=>{
+        if(result.payload.role === 'Admin'){
+          navigate('/admin');}
+        else{
+          navigate('/');
+        }
+      },1000)
+      
+    } else {
+      toast.error(result.payload || 'Login failed');
     }
   };
 
 
 
   const handleGoogleLogin = async () => {
-    setLoading(true);
     try {
       const result = await signInWithPopup(auth, googleProvider);
-      const user = result.user;
-      const idToken = await user.getIdToken();
-      
-      const response = await axios.post('http://localhost:8000/api/users/firebase-login/', {
-        id_token: idToken,
-      }, {
-        withCredentials: true,
-      });
+      const idToken = await result.user.getIdToken();
+      const response = await dispatch(googleLogin(idToken));
 
-      const { user: userData } = response.data;
-      console.log('userData:', userData);
-      localStorage.setItem('user', JSON.stringify(userData));
-      toast.success('Login successful');
-
-      setTimeout(() => {
-        if (userData.role === 'Admin') {
-          navigate('/admin-dashboard');
-        } else {
-          navigate('/');
-        }
-      }, 2000);
+      if(googleLogin.fulfilled.match(response)){
+        toast.success('Welcome back!');
+        setTimeout(() => {
+            navigate('/');
+        }, 1000);
+      }
+      else {
+        toast.error(response.payload || 'Google login failed');
+      }
     } catch (error) {
-      console.error('Google Login Error:', error);
       toast.error(`Login failed: ${error.message}`);
-      setLoading(false);
     }
   };
 

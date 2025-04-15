@@ -1,16 +1,31 @@
 import React, { useState } from 'react';
 import { Search, ShoppingCart, Package, User, Menu, X } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { logout } from '../../redux/slices/authSlices';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const {user} = useSelector(state => state.auth);
 
   const handleAccountClick = () => {
-    navigate('/login');
+    if(user){
+      console.log('Profile')
+      navigate('/profile');
+    }
+    else{
+      navigate('/login');
+    }
     setIsMenuOpen(false); // Close mobile menu if open
   };
 
+  const handleLogout = () => {
+    dispatch(logout()); // Clear Redux user
+    navigate('/login');
+    setIsMenuOpen(false);
+  };
   return (
     <>
       <header className="bg-black text-white">
@@ -52,6 +67,18 @@ const Header = () => {
                 </div>
               </div>
               
+            <div className="flex items-center space-x-4">
+            {user ? (
+              <div className="flex items-center space-x-2 cursor-pointer" >
+                <User size={24} />
+                <div className="hidden sm:block">
+                  <div className="text-sm" onClick={handleAccountClick}>{user.name}</div>
+                  <div className="text-xs text-gray-300 pt-1 cursor-pointer" onClick={handleLogout}>
+                    Logout
+                  </div>
+                </div>
+              </div>
+            ) : (
               <Link to="/login" className="flex items-center space-x-2">
                 <User size={24} />
                 <div className="hidden sm:block">
@@ -59,6 +86,8 @@ const Header = () => {
                   <div className="text-xs text-gray-300">Register or Login</div>
                 </div>
               </Link>
+            )}
+          </div>
             </div>
 
             {/* Mobile Menu Button */}
@@ -92,10 +121,33 @@ const Header = () => {
               <ShoppingCart size={24} />
               <span>Cart (0)</span>
             </div>
-            <Link to="/login" className="flex items-center space-x-2 px-4 py-2 hover:bg-gray-800">
+
+            {user ? (
+            <div className="flex flex-col space-y-4">
+              <div
+                className="flex items-center space-x-2 px-4 py-2 hover:bg-gray-800 cursor-pointer"
+                onClick={handleAccountClick}
+              >
+                <User size={24} />
+                <span>{user.name || user.email}</span>
+              </div>
+              <div
+                className="flex items-center space-x-2 px-4 py-2 hover:bg-gray-800 cursor-pointer"
+                onClick={handleLogout}
+              >
+                <span>Logout</span>
+              </div>
+            </div>
+          ) : (
+            <Link
+              to="/login"
+              className="flex items-center space-x-2 px-4 py-2 hover:bg-gray-800"
+            >
               <User size={24} />
               <span>Account</span>
             </Link>
+          )}
+
           </div>
         </div>
       </header>

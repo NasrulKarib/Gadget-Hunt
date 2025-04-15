@@ -3,8 +3,10 @@ import { Mail, Lock, User, Eye, EyeOff, ArrowRight, AlertCircle, CheckCircle } f
 import { FcGoogle } from 'react-icons/fc';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useDispatch} from 'react-redux';
+import { googleLogin } from '../../redux/slices/authSlices';
 import { auth, googleProvider } from '../../firebase';
 import { signInWithPopup } from 'firebase/auth';
 
@@ -20,6 +22,7 @@ const Signup = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -48,39 +51,26 @@ const Signup = () => {
     setLoading(true);
     setError('');
     try{
-      const response = await axios.post('http://localhost:8000/api/users/signup/', {
+      await axios.post('http://localhost:8000/api/users/signup/', {
         name: formData.name,
         email: formData.email,
         password: formData.password,
         role: formData.role // Default to 'Customer'
-      });
+      },{withCredentials: true});
 
-      const {user} = response.data;
-      localStorage.setItem('userId', user.id);
+   
       setLoading(false);
       
-      toast.success('Signup successful! Redirecting to login...',{
-        position: "top-center",
-        autoClose: 3000,
-        hideProgressBar: false,
-      });
+      toast.success('Signup successful! Redirecting to login...');
       navigate('/login');
     }
     catch(err){
       setLoading(false);
       if (err.response && err.response.data) {
         console.log(err.response.data);
-        toast.error("Signup failed. Please try again.",{
-          position: "top-center",
-          autoClose: 3000,
-          hideProgressBar: false,
-        });
+        toast.error("Signup failed. Please try again.");
       } else {
-        toast.error("Network Error! Please try again later.",{
-          position: "top-center",
-          autoClose: 3000,
-          hideProgressBar: false,
-        });
+        toast.error("Network Error! Please try again later.");
       }
       
       
@@ -88,34 +78,24 @@ const Signup = () => {
   };
 
  
-
   const handleGoogleSignup = async() => {
-   
     setLoading(true);
     try {
-      // Use signInWithPopup instead of signInWithRedirect
       const result = await signInWithPopup(auth, googleProvider);
       const user = result.user;
       const idToken = await user.getIdToken();
 
-      // Send the ID token to the backend
-      const response = await axios.post('http://localhost:8000/api/users/firebase-signup/', {
-        id_token: idToken,
-      }, {
-        withCredentials: true,
-      });
+      const response = await dispatch(googleLogin(idToken));
 
-      const { user: userData } = response.data;
-      localStorage.setItem('user', JSON.stringify(userData));
-      toast.success('Signup successful');
+      if(googleLogin.fulfilled.match(response)){
+        toast.success('Signup successful');
+        navigate('/');
+      }
+      else{
+        toast.error(response.payload || 'Signup Failed!')
+      }
 
-      setTimeout(() => {
-        if (userData.role === 'Admin') {
-          navigate('/admin-dashboard');
-        } else {
-          navigate('/');
-        }
-      }, 1000);
+      setLoading(false);
     } catch (error) {
       console.error('Google Signup Error:', error);
       toast.error(`Signup failed: ${error.message}`);

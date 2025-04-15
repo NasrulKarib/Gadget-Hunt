@@ -13,11 +13,9 @@ const firebaseConfig = {
 
 // Initialize Firebase with the provided config
 const app = initializeApp(firebaseConfig);
-console.log('Firebase app initialized:', app.name);  // Should log "[DEFAULT]"
 
 // Initialize Firebase Authentication
 const auth = getAuth(app);
-console.log('Firebase Auth initialized:', auth);
 
 // Google Auth Provider
 const googleProvider = new GoogleAuthProvider();
