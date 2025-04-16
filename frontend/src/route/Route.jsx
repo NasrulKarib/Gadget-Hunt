@@ -39,6 +39,7 @@ const MainLayout = () => (
 
 const AuthRedirect = ({ children }) => {
   const { user } = useSelector((state) => state.auth);
+
   if (user) {
     return <Navigate to={user.role === 'Admin' ? '/admin' : '/'} replace />;
   }
