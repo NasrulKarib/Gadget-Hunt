@@ -31,3 +31,14 @@ class UserLoginSerializer(serializers.Serializer):
         data['user'] = user
         return data
     
+class UserProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Users
+        fields = ['name', 'phone',  'email', 'address', 'role']
+        extra_kwargs = {
+            'email': {'read_only': True}, 
+            'role': {'read_only': True},  # Prevent role updates
+            'address': {'required': False},  
+            'name': {'required': False},
+            'phone': {'required': False},
+        }
