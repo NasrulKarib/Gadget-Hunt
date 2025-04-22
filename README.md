@@ -74,4 +74,13 @@ GadgetHunt ensures a smooth and efficient shopping experience for tech enthusias
 - **Description**: Facilitates live chat between customers and admins.
 - **Columns**: `id (PK)`, `sender_id (FK)`, `receiver_id (FK)`, `message_text`, `sent_at`, `is_read`.
 
+## Features
+### Homepage
+The homepage provides an overview of the platform, showcasing latest offers, devices, brands etc.
+
+![alt text](./frontend/src/assets/readme/Home/1.png)
+![alt text](./frontend/src/assets/readme/Home/2.png)
+![alt text](./frontend/src/assets/readme/Home/3.png)
+![alt text](./frontend/src/assets/readme/Home/4.png)
+![alt text](./frontend/src/assets/readme/Home/5.png)
 
