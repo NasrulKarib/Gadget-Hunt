@@ -55,7 +55,7 @@ const AppRoutes = () => {
       dispatch(setUser(JSON.parse(storedUser)));
     }
   },[dispatch]);
-  
+
   return (
     <Router>
       <Routes>
