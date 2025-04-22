@@ -39,10 +39,13 @@ class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Users
         fields = ['name', 'phone',  'email', 'address', 'role']
+
+class UserProfileUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Users
+        fields = ['name', 'email', 'phone']
         extra_kwargs = {
-            'email': {'read_only': True}, 
-            'role': {'read_only': True},  # Prevent role updates
-            'address': {'required': False},  
+            'email': {'read_only': True},
             'name': {'required': False},
             'phone': {'required': False},
         }

@@ -2,7 +2,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from .models import Users
-from .serializers import UserSerializer, UserLoginSerializer, UserProfileSerializer
+from .serializers import UserSerializer, UserLoginSerializer, UserProfileSerializer, UserProfileUpdateSerializer
 from rest_framework_simplejwt.tokens import RefreshToken, AccessToken
 from rest_framework_simplejwt.exceptions import TokenError, InvalidToken
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -155,7 +155,31 @@ class GetProfileView(APIView):
             "message" : "User profile retrieved successfully",
             "user": serializer.data
         }, status=status.HTTP_200_OK)
-    
+class UpdateProfileView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def patch(self, request):
+        user = request.user
+        try:
+            user_instance = Users.objects.get(id=user.id)
+        except Users.DoesNotExist:
+            return Response({'details': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = UserProfileUpdateSerializer(user_instance, data=request.data, partial=True)
+        if serializer.is_valid():
+            updated_user = serializer.save()
+            return Response({
+                'message': 'Profile updated successfully',
+                'user': {
+                    'name': updated_user.name,
+                    'email': updated_user.email,
+                    'phone': updated_user.phone,
+                    'address': updated_user.address,
+                    'role': updated_user.role,
+                }
+            }, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+      
 class AdminDashboardView(APIView):
 
     permission_classes = [IsAuthenticated]
