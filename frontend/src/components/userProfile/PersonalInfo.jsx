@@ -1,14 +1,57 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect} from 'react';
+import axios from 'axios';
 import { Camera } from 'lucide-react';
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const PersonalInfo = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
-    firstName: 'John',
-    lastName: 'Doe',
-    email: 'john.doe@example.com',
-    phone: '+1 234 567 890'
+    firstName: '',
+    lastName: '',
+    email: '',
+    phone: '',
   });
+
+  useEffect(()=>{
+    function extractNames(name) {
+      const parts = name.trim().split(/\s+/);
+    
+      if (parts.length === 1) {
+        return { firstName: parts[0], lastName: '' };
+      }
+    
+      let rawLastName = parts[parts.length - 1];
+      const lastName = rawLastName.replace(/^\(|\)$/g, ''); 
+
+      const firstName = parts.slice(0, -1).join(' ');
+    
+      return { firstName, lastName };
+    }
+    
+
+    const fetchProfile = async()=>{
+      try{
+        const response = await axios.get('http://localhost:8000/api/users/profile/', 
+          {withCredentials: true}
+        );
+        const userData = response.data.user;
+        const { firstName, lastName } = extractNames(userData.name);
+        setFormData({
+          firstName: firstName || '',
+          lastName: lastName || '',
+          phone: userData.phone || '',
+          email: userData.email || '',
+        });
+        
+      }catch (error) {
+        console.error('Error fetching profile:', error);
+        toast.error('Failed to load profile');
+      }
+    }
+    fetchProfile();
+    
+  },[])
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -29,28 +72,7 @@ const PersonalInfo = () => {
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Profile Picture */}
-        <div className="flex items-center gap-6">
-          <div className="relative">
-            <img
-              src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-              alt="Profile"
-              className="w-24 h-24 rounded-full object-cover"
-            />
-            {isEditing && (
-              <label className="absolute bottom-0 right-0 p-2 bg-white rounded-full shadow-lg cursor-pointer">
-                <Camera size={20} className="text-gray-600" />
-                <input type="file" className="hidden" accept="image/*" />
-              </label>
-            )}
-          </div>
-          {isEditing && (
-            <div className="text-sm text-gray-500">
-              <p>Upload a new photo</p>
-              <p>JPG, GIF or PNG. 1MB max.</p>
-            </div>
-          )}
-        </div>
+       
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>

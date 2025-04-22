@@ -2,7 +2,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from .models import Users
-from .serializers import UserSerializer, UserLoginSerializer
+from .serializers import UserSerializer, UserLoginSerializer, UserProfileSerializer
 from rest_framework_simplejwt.tokens import RefreshToken, AccessToken
 from rest_framework_simplejwt.exceptions import TokenError, InvalidToken
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -138,19 +138,22 @@ class LoginView(APIView):
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
-class UserProfileView(APIView):
+class GetProfileView(APIView):
 
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
         user = request.user
-        role = request.auth.payload.get('role')
+        try:
+            user_instance = Users.objects.get(id = user.id)
+        except Users.DoesNotExist:
+            return Response({'details':'User not found'}, status = status.HTTP_404_NOT_FOUND)
 
+
+        serializer = UserProfileSerializer(user_instance)
         return Response({
-            "id": user.id,
-            "email": user.email,
-            "name": user.name,
-            "role": role
+            "message" : "User profile retrieved successfully",
+            "user": serializer.data
         }, status=status.HTTP_200_OK)
     
 class AdminDashboardView(APIView):
@@ -165,26 +168,7 @@ class AdminDashboardView(APIView):
             return Response({"message": "Admin Access required"}, status=status.HTTP_401_UNAUTHORIZED)
         
         return Response({"message":"Welcome to Admin Dashboard"},status=status.HTTP_200_OK)
-    
-class ValidateToken(APIView):
-    def get(self, request):
-        access_token = request.COOKIES.get('access_token')
-
-        if not access_token:
-            return Response({"message":"No access token provided"},status=status.HTTP_400_BAD_REQUEST)
-        
-        try:
-            token = AccessToken(access_token)
-            payload = token.payload
-            return Response(
-                {
-                    "message":"Token is valid",
-                    "payload": payload
-                }, status=status.HTTP_200_OK
-            )
-        except(InvalidToken, TokenError) as e:
-            return Response({"message":str(e)},status=status.HTTP_400_BAD_REQUEST)
-            
+                
 class FirebaseLoginView(APIView):
 
     permission_classes = [AllowAny]
@@ -196,8 +180,10 @@ class FirebaseLoginView(APIView):
         
         try:
             decode_token = auth.verify_id_token(id_token)
+            print(decode_token)
             email = decode_token.get('email')
             name = decode_token.get('name')
+            image = decode_token.get('picture')
 
             if not email:
                 return Response({"message":"Email is not found in token"},status=status.HTTP_400_BAD_REQUEST)
@@ -207,7 +193,9 @@ class FirebaseLoginView(APIView):
                 defaults = {
                     'name': name,
                     'password': str(uuid.uuid4()),  # Generate a random password
+                    'image': image
                 }
+               
             )
 
             refresh = RefreshToken.for_user(user)

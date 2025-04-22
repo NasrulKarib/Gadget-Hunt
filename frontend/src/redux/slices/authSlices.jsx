@@ -41,6 +41,7 @@ const authSlide = createSlice({
       user: null,
       loading: false,
       error: null,
+      isCheckingAuth: true
     },
     reducers: {
       setUser:(state,action) =>{
@@ -52,6 +53,7 @@ const authSlide = createSlice({
       logout:(state) => {
         state.user = null;
         state.error = null;
+        state.isCheckingAuth = false;
         localStorage.removeItem('user');
       },
     },
