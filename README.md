@@ -84,3 +84,10 @@ The homepage provides an overview of the platform, showcasing latest offers, dev
 ![alt text](./frontend/src/assets/readme/Home/4.png)
 ![alt text](./frontend/src/assets/readme/Home/5.png)
 
+### Profile
+Profile contains user info, address and user can update their profile
+
+![alt text](./frontend/src/assets/readme/Profile/profile1.png)
+![alt text](./frontend/src/assets/readme/Profile/profile2.png)
+![alt text](./frontend/src/assets/readme/Profile/profile3.png)
+![alt text](./frontend/src/assets/readme/Profile/profile4.png)
