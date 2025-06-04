@@ -2,31 +2,59 @@ import React, { useState } from 'react';
 import { Mail, Lock, Eye, EyeOff, ArrowRight, AlertCircle } from 'lucide-react';
 import { FcGoogle } from 'react-icons/fc';
 import { Link, useNavigate } from 'react-router-dom';
+import {useDispatch, useSelector} from 'react-redux';
+import {loginUser, googleLogin} from '../../redux/slices/authSlices'
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import {auth, googleProvider} from '../../firebase' 
+import {signInWithPopup} from 'firebase/auth';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch();
   const navigate = useNavigate();
+  const {loading, error} = useSelector(state=> state.auth);
 
-  const handleLogin = (e) => {
+  const handleLogin = async(e) => {
     e.preventDefault();
-    setLoading(true);
-    // Backend integration will go here
-    setTimeout(() => {
-      setLoading(false);
-      // For now just simulate success
-      console.log('Login attempt with:', { email, password });
-      // After successful login, navigate to home
-      // navigate('/');
-    }, 1000);
+    const result = await dispatch(loginUser({ email, password }));
+    if (loginUser.fulfilled.match(result)) {
+      toast.success('Login successful');
+      setTimeout(()=>{
+        if(result.payload.role === 'Admin'){
+          navigate('/admin');}
+        else{
+          navigate('/');
+        }
+      },1000)
+      
+    } else {
+      toast.error(result.payload || 'Login failed');
+    }
   };
 
-  const handleGoogleLogin = () => {
-    // Google authentication will be implemented here
-    console.log('Google login clicked');
+
+
+  const handleGoogleLogin = async () => {
+    try {
+      const result = await signInWithPopup(auth, googleProvider);
+      const idToken = await result.user.getIdToken();
+      const response = await dispatch(googleLogin(idToken));
+
+      if(googleLogin.fulfilled.match(response)){
+        toast.success('Welcome back!');
+        setTimeout(() => {
+            navigate('/');
+        }, 1000);
+      }
+      else {
+        toast.error(response.payload || 'Google login failed');
+      }
+    } catch (error) {
+      toast.error(`Login failed: ${error.message}`);
+    }
   };
 
   return (

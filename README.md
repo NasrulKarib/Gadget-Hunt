@@ -1,5 +1,5 @@
 # GadgetHunt
-**GadgetHunt** is an online marketplace for smart gadgets, offering the latest and hottest devices, including smartphones, tablets, TWS earbuds, and neckbands.
+**GadgetHunt** is an online marketplace for smart gadgets, offering the latest and hottest devices, including smartphones, tablets, TWS earbuds, neckbands etc.
 
 ## Key Features
 
@@ -16,6 +16,15 @@
 GadgetHunt ensures a smooth and efficient shopping experience for tech enthusiasts while providing sellers with powerful tools to manage their inventory.
 
 **Live Demo**: will be available soon..
+
+## Technologies Used
+
+| Component      | Technology | Description |
+|--------------|------------|-------------|
+| **Frontend**  | React      | A JavaScript library for building interactive user interfaces. |
+| **Backend**   | Django     | A high-level Python web framework for rapid and secure development. |
+| **Database**  | PostgreSQL | A powerful, open-source relational database system. |
+| **Version Control** | GitHub | A platform for managing and collaborating on code using Git. |
 
 ## ER Diagram
 ![ER Diagram](GadgetHunt.png)
@@ -65,4 +74,20 @@ GadgetHunt ensures a smooth and efficient shopping experience for tech enthusias
 - **Description**: Facilitates live chat between customers and admins.
 - **Columns**: `id (PK)`, `sender_id (FK)`, `receiver_id (FK)`, `message_text`, `sent_at`, `is_read`.
 
+## Features
+### Homepage
+The homepage provides an overview of the platform, showcasing latest offers, devices, brands etc.
 
+![alt text](./frontend/src/assets/readme/Home/1.png)
+![alt text](./frontend/src/assets/readme/Home/2.png)
+![alt text](./frontend/src/assets/readme/Home/3.png)
+![alt text](./frontend/src/assets/readme/Home/4.png)
+![alt text](./frontend/src/assets/readme/Home/5.png)
+
+### Profile
+Profile contains user info, address and user can update their profile
+
+![alt text](./frontend/src/assets/readme/Profile/profile1.png)
+![alt text](./frontend/src/assets/readme/Profile/profile2.png)
+![alt text](./frontend/src/assets/readme/Profile/profile3.png)
+![alt text](./frontend/src/assets/readme/Profile/profile4.png)

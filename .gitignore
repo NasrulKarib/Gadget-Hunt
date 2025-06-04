@@ -23,3 +23,14 @@ frontend/.vscode/
 frontend/.idea/
 frontend/.DS_Store
 frontend/Thumbs.db
+frontend/.env
+
+venv
+backend/.env
+backend/backend/credentials
+backend/backend/__pycache__/
+backend/orders/__pycache__/
+backend/products/__pycache__/
+backend/users/__pycache__/
+
+

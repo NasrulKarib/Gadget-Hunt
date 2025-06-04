@@ -1,7 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState , useEffect} from 'react';
 import { Mail, Lock, User, Eye, EyeOff, ArrowRight, AlertCircle, CheckCircle } from 'lucide-react';
 import { FcGoogle } from 'react-icons/fc';
 import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { useDispatch} from 'react-redux';
+import { googleLogin } from '../../redux/slices/authSlices';
+import { auth, googleProvider } from '../../firebase';
+import { signInWithPopup } from 'firebase/auth';
 
 const Signup = () => {
   const [formData, setFormData] = useState({
@@ -15,6 +22,7 @@ const Signup = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -36,24 +44,63 @@ const Signup = () => {
     return true;
   };
 
-  const handleSignup = (e) => {
+  const handleSignup = async (e) => {
     e.preventDefault();
     if (!validatePassword()) return;
     
     setLoading(true);
-    // Backend integration will go here
-    setTimeout(() => {
+    setError('');
+    try{
+      await axios.post('http://localhost:8000/api/users/signup/', {
+        name: formData.name,
+        email: formData.email,
+        password: formData.password,
+        role: formData.role // Default to 'Customer'
+      },{withCredentials: true});
+
+   
       setLoading(false);
-      // For now just simulate success
-      console.log('Signup attempt with:', formData);
-      // After successful signup, navigate to login or home
-      // navigate('/login');
-    }, 1000);
+      
+      toast.success('Signup successful! Redirecting to login...');
+      navigate('/login');
+    }
+    catch(err){
+      setLoading(false);
+      if (err.response && err.response.data) {
+        console.log(err.response.data);
+        toast.error("Signup failed. Please try again.");
+      } else {
+        toast.error("Network Error! Please try again later.");
+      }
+      
+      
+    }
   };
 
-  const handleGoogleSignup = () => {
-    // Google authentication will be implemented here
-    console.log('Google signup clicked');
+ 
+  const handleGoogleSignup = async() => {
+    setLoading(true);
+    try {
+      const result = await signInWithPopup(auth, googleProvider);
+      const user = result.user;
+      const idToken = await user.getIdToken();
+
+      const response = await dispatch(googleLogin(idToken));
+
+      if(googleLogin.fulfilled.match(response)){
+        toast.success('Signup successful');
+        navigate('/');
+      }
+      else{
+        toast.error(response.payload || 'Signup Failed!')
+      }
+
+      setLoading(false);
+    } catch (error) {
+      console.error('Google Signup Error:', error);
+      toast.error(`Signup failed: ${error.message}`);
+      setLoading(false);
+    }
   };
 
   return (

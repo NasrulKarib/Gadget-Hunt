@@ -1,28 +1,41 @@
 import React, { useState } from 'react';
 import { Search, ShoppingCart, Package, User, Menu, X } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { logout } from '../../redux/slices/authSlices';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const {user} = useSelector(state => state.auth);
 
   const handleAccountClick = () => {
-    navigate('/login');
+    if(user){
+      console.log('Profile')
+      navigate('/profile');
+    }
+    else{
+      navigate('/login');
+    }
     setIsMenuOpen(false); // Close mobile menu if open
   };
 
+  const handleLogout = () => {
+    dispatch(logout()); // Clear Redux user
+    navigate('/');
+    setIsMenuOpen(false);
+  };
   return (
     <>
       <header className="bg-black text-white">
         <div className="container mx-auto px-4">
           {/* Top Header */}
           <div className="flex items-center justify-between py-4">
-            <div className="flex items-center space-x-2">
-              <Link to="/" className="flex items-center space-x-2">
-                <span className="text-2xl font-bold text-orange-500">Gadget</span>
-                <span className="text-2xl font-bold">Hunt</span>
-              </Link>
-            </div>
+            <Link to="/" className="flex items-center space-x-2">
+              <span className="text-2xl font-bold text-orange-500">Gadget</span>
+              <span className="text-2xl font-bold">Hunt</span>
+            </Link>
             
             {/* Search Bar - Hidden on mobile, shown on tablet and up */}
             <div className="hidden md:flex flex-1 max-w-2xl mx-8">
@@ -54,16 +67,27 @@ const Header = () => {
                 </div>
               </div>
               
-              <div 
-                className="flex items-center space-x-2 cursor-pointer"
-                onClick={handleAccountClick}
-              >
+            <div className="flex items-center space-x-4">
+            {user ? (
+              <div className="flex items-center space-x-2 cursor-pointer" >
+                <User size={24} />
+                <div className="hidden sm:block">
+                  <div className="text-sm hover:text-orange-500" onClick={handleAccountClick}>{user.name}</div>
+                  <div className="text-xs text-gray-300 pt-1  hover:text-orange-500 cursor-pointer" onClick={handleLogout}>
+                    Logout
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <Link to="/login" className="flex items-center space-x-2">
                 <User size={24} />
                 <div className="hidden sm:block">
                   <div className="text-sm">Account</div>
                   <div className="text-xs text-gray-300">Register or Login</div>
                 </div>
-              </div>
+              </Link>
+            )}
+          </div>
             </div>
 
             {/* Mobile Menu Button */}
@@ -97,21 +121,41 @@ const Header = () => {
               <ShoppingCart size={24} />
               <span>Cart (0)</span>
             </div>
-            <div 
-              className="flex items-center space-x-2 px-4 py-2 hover:bg-gray-800 cursor-pointer"
-              onClick={handleAccountClick}
+
+            {user ? (
+            <div className="flex flex-col space-y-4">
+              <div
+                className="flex items-center space-x-2 px-4 py-2 hover:bg-gray-800 cursor-pointer"
+                onClick={handleAccountClick}
+              >
+                <User size={24} />
+                <span>{user.name || user.email}</span>
+              </div>
+              <div
+                className="flex items-center space-x-2 px-4 py-2 hover:bg-gray-800 cursor-pointer"
+                onClick={handleLogout}
+              >
+                <span>Logout</span>
+              </div>
+            </div>
+          ) : (
+            <Link
+              to="/login"
+              className="flex items-center space-x-2 px-4 py-2 hover:bg-gray-800"
             >
               <User size={24} />
               <span>Account</span>
-            </div>
+            </Link>
+          )}
+
           </div>
         </div>
       </header>
       
       {/* Navigation Menu - Fixed with white background and shadow */}
       <nav className="sticky top-0 z-50 bg-white shadow-md">
-        <div className="container mx-auto">
-          <div className="overflow-x-auto">
+        <div className="container  mx-auto">
+          <div className="overflow-x-auto ">
             <ul className="flex justify-center space-x-8 min-w-max px-4 py-3">
               <li className="text-gray-700 hover:text-orange-500 cursor-pointer whitespace-nowrap">Phones & Tablets</li>
               <li className="text-gray-700 hover:text-orange-500 cursor-pointer whitespace-nowrap">Laptop & Desktop</li>
