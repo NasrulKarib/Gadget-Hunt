@@ -7,23 +7,7 @@ frontend/dist/
 
 # Ignore environment and configuration files
 frontend/.env
-frontend/.env.local
-frontend/.env.development
-frontend/.env.production
 
-# Ignore logs
-frontend/npm-debug.log
-frontend/yarn-error.log
-
-# Ignore Vite cache
-frontend/.vite/
-
-# Ignore editor-specific files
-frontend/.vscode/
-frontend/.idea/
-frontend/.DS_Store
-frontend/Thumbs.db
-frontend/.env
 
 venv
 backend/.env
