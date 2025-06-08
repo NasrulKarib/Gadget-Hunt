@@ -74,7 +74,55 @@ GadgetHunt ensures a smooth and efficient shopping experience for tech enthusias
 - **Description**: Facilitates live chat between customers and admins.
 - **Columns**: `id (PK)`, `sender_id (FK)`, `receiver_id (FK)`, `message_text`, `sent_at`, `is_read`.
 
+## Docker Setup and Usage
+
+### Prerequisites
+- **Docker**: Ensure Docker and Docker Compose are installed on your system or VM. Install via:
+  - Linux: `sudo apt update && sudo apt install docker.io docker-compose`
+  - Windows/Mac: Download Docker Desktop from [docker.com](https://www.docker.com/products/docker-desktop/).
+- **Git**: Clone the repository: `git clone https://github.com/NasrulKarib/Gadget-Hunt`.
+
+### Docker Files
+- **`Dockerfile.backend`**: Defines the backend (Django) image based on `python:3.11-slim`, installing dependencies from `backend/requirements.txt` and exposing port `8000`.
+- **`Dockerfile.frontend`**: Defines the frontend (React/Vite) image based on `node:alpine`, installing dependencies with npm and exposing port `5173`.
+
+### Configuration
+- **Environment Variables**:
+  - Create `backend/.env` with NeonDB credentials (e.g., `DB_HOST`, `DB_USER`, `DB_PASSWORD`).
+  - Create a root `.env` file with Firebase config (e.g., `VITE_FIREBASE_API_KEY`) for the frontend.
+- **.dockerignore**: Prevents copying sensitive files (e.g., `.env`, `node_modules`).
+
+### Running the Application
+- **Clone the Repository**:
+  ```bash
+  git clone https://github.com/NasrulKarib/Gadget-Hunt
+  cd GadgetHunt
+  ```
+
+- **Build and Start Containers**:
+  ```bash
+  docker-compose up --build
+  ```
+  - Backend runs on `http://localhost:8000`
+  - Frontend runs on `http://localhost:5173`.
+
+- **Apply Database Migrations**:
+  ```bash
+  docker-compose exec backend python manage.py migrate
+  ```
+- Stopping the Application
+  ```bash
+  docker-compose down
+  ```
+
+- Troubleshooting
+  ```bash
+  docker-compose logs backend
+  docker-compose logs frontend
+  ```
+
 ## Features
+
 ### Homepage
 The homepage provides an overview of the platform, showcasing latest offers, devices, brands etc.
 
@@ -91,3 +139,4 @@ Profile contains user info, address and user can update their profile
 ![alt text](./frontend/src/assets/readme/Profile/profile2.png)
 ![alt text](./frontend/src/assets/readme/Profile/profile3.png)
 ![alt text](./frontend/src/assets/readme/Profile/profile4.png)
+
