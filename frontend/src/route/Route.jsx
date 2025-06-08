@@ -9,6 +9,8 @@ import Signup from '../components/auth/Signup';
 import HeroSection from '../components/main/HeroSections';
 import FeaturedCategories from '../components/main/FeatureCategories';
 import ProductCard from '../components/main/ProductCard';
+import ProductList from '../components/shop/ProductListing'
+import ProductDetails from '../components/shop/ProductDetails'
 import BrandMarquee from '../components/main/BrandMarquee';
 import UserProfile from '../components/userProfile/UserProfile';
 import Admin from '../components/admin/AdminDashboard';
@@ -65,6 +67,8 @@ const AppRoutes = () => {
           <Route path="/login" element={<AuthRedirect> <Login /> </AuthRedirect>} />
           <Route path="/signup" element={<AuthRedirect> <Signup /> </AuthRedirect> } />
           <Route path="/profile" element={<Protected> <UserProfile /> </Protected>} />
+          <Route path="/shop" element={<ProductList />} />
+          <Route path="/product/:id" element={<ProductDetails />} />
         </Route>
    
         {/* Admin Routes */}
