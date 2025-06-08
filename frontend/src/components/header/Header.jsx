@@ -21,6 +21,9 @@ const Header = () => {
     setIsMenuOpen(false); // Close mobile menu if open
   };
 
+  const handleShop = ()=>{
+    navigate('/shop')
+  }
   const handleLogout = () => {
     dispatch(logout()); // Clear Redux user
     navigate('/');
@@ -157,12 +160,12 @@ const Header = () => {
         <div className="container  mx-auto">
           <div className="overflow-x-auto ">
             <ul className="flex justify-center space-x-8 min-w-max px-4 py-3">
-              <li className="text-gray-700 hover:text-orange-500 cursor-pointer whitespace-nowrap">Phones & Tablets</li>
-              <li className="text-gray-700 hover:text-orange-500 cursor-pointer whitespace-nowrap">Laptop & Desktop</li>
-              <li className="text-gray-700 hover:text-orange-500 cursor-pointer whitespace-nowrap">Sound Equipment</li>
-              <li className="text-gray-700 hover:text-orange-500 cursor-pointer whitespace-nowrap">Power & Accessories</li>
-              <li className="text-gray-700 hover:text-orange-500 cursor-pointer whitespace-nowrap">Fitness & Wearable</li>
-              <li className="text-gray-700 hover:text-orange-500 cursor-pointer whitespace-nowrap">Cover & Glass</li>
+              <li className="text-gray-700 hover:text-orange-500 cursor-pointer whitespace-nowrap" onClick={handleShop}>Phones & Tablets</li>
+              <li className="text-gray-700 hover:text-orange-500 cursor-pointer whitespace-nowrap" onClick={handleShop}>Laptop & Desktop</li>
+              <li className="text-gray-700 hover:text-orange-500 cursor-pointer whitespace-nowrap" onClick={handleShop}>Sound Equipment</li>
+              <li className="text-gray-700 hover:text-orange-500 cursor-pointer whitespace-nowrap" onClick={handleShop}>Power & Accessories</li>
+              <li className="text-gray-700 hover:text-orange-500 cursor-pointer whitespace-nowrap" onClick={handleShop}>Fitness & Wearable</li>
+              <li className="text-gray-700 hover:text-orange-500 cursor-pointer whitespace-nowrap" onClick={handleShop}>Cover & Glass</li>
             </ul>
           </div>
         </div>
