@@ -1,12 +1,9 @@
-import React from 'react';
 import { NavLink } from 'react-router-dom';
 import {
   LayoutDashboard,
   ShoppingBag,
   Users,
   Package,
-  Settings,
-  HelpCircle
 } from 'lucide-react';
 
 const AdminSidebar = () => {
@@ -30,8 +27,7 @@ const AdminSidebar = () => {
       title: 'Customers',
       icon: Users,
       path: '/admin/customers'
-    },
-    
+    }
   ];
 
   return (
@@ -43,15 +39,15 @@ const AdminSidebar = () => {
               <NavLink
                 to={item.path}
                 className={({ isActive }) =>
-                  `flex items-center gap-3 px-4 py-2 rounded-lg transition ${
+                  `flex items-center gap-3 px-4 py-2 rounded-lg transition-all duration-200 ${
                     isActive
-                      ? 'bg-orange-50 text-orange-500'
-                      : 'text-gray-600 hover:bg-gray-50'
+                      ? 'bg-orange-50 text-orange-500 border-r-2 border-orange-500'
+                      : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
                   }`
                 }
               >
                 <item.icon size={20} />
-                <span>{item.title}</span>
+                <span className="font-medium">{item.title}</span>
               </NavLink>
             </li>
           ))}
