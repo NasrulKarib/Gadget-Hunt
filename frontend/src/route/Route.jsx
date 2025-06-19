@@ -43,6 +43,7 @@ const AuthRedirect = ({ children }) => {
   const { user } = useSelector((state) => state.auth);
 
   if (user) {
+    console.log(user.role)
     return <Navigate to={user.role === 'Admin' ? '/admin' : '/'} replace />;
   }
   return children;
@@ -72,6 +73,8 @@ const AppRoutes = () => {
         </Route>
    
         {/* Admin Routes */}
+        <Route path="/admin" element={<Navigate to="/admin/overview" replace />} />
+        
         <Route path="/admin" element={<Protected requireAdmin> <Admin /> </Protected>}>
           <Route path="overview" element={<Overview />} />
           <Route path="products" element={<Products />} />

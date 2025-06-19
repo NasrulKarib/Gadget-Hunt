@@ -204,10 +204,8 @@ class FirebaseLoginView(APIView):
         
         try:
             decode_token = auth.verify_id_token(id_token)
-            print(decode_token)
             email = decode_token.get('email')
             name = decode_token.get('name')
-            image = decode_token.get('picture')
 
             if not email:
                 return Response({"message":"Email is not found in token"},status=status.HTTP_400_BAD_REQUEST)
@@ -217,7 +215,6 @@ class FirebaseLoginView(APIView):
                 defaults = {
                     'name': name,
                     'password': str(uuid.uuid4()),  # Generate a random password
-                    'image': image
                 }
                
             )
@@ -258,6 +255,7 @@ class FirebaseLoginView(APIView):
         except auth.InvalidIdTokenError:
             return Response({'detail': 'Invalid ID token'}, status=status.HTTP_401_UNAUTHORIZED)
         except Exception as e:
+            print(str(e))
             return Response({'detail': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
 class FirebaseSignupView(APIView):

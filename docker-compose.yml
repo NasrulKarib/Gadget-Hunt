@@ -2,7 +2,7 @@
 services:
   backend:
     build:
-      dockerfile: Dockerfile.backend
+      dockerfile: ./backend/Dockerfile.backend
     volumes:
       - ./backend:/app
     ports:
@@ -13,7 +13,7 @@ services:
   frontend:
     build:
       context: .
-      dockerfile: Dockerfile.frontend
+      dockerfile: ./frontend/Dockerfile.frontend
     volumes:
       - ./frontend:/app
       - /app/node_modules
