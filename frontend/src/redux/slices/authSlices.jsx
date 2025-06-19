@@ -30,6 +30,7 @@ export const googleLogin = createAsyncThunk(
         localStorage.setItem('user', JSON.stringify(response.data.user));
         return response.data.user;
       } catch (err) {
+        console.log(err)
         return rejectWithValue(err.message);
       }
     }

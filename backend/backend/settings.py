@@ -73,10 +73,10 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-
 load_dotenv()
 
-tmpPostgres = urlparse(os.getenv("DATABASE_URL"))
+database_url = os.getenv('DATABASE_URL')
+tmpPostgres = urlparse(database_url)
 
 DATABASES = {
     'default': {
@@ -86,8 +86,10 @@ DATABASES = {
         'PASSWORD': tmpPostgres.password,
         'HOST': tmpPostgres.hostname,
         'PORT': 5432,
+        'SCHEMAS' : ['GadgetHunt']
     }
 }
+
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (

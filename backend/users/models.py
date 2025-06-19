@@ -21,8 +21,10 @@ class Users(models.Model):
     @property
     def is_authenticated(self):
         return True
+    
     class Meta:
-        db_table = '"GadgetHunt"."users"'  
+        db_table = '"GadgetHunt"."users"'
+
 
 class Messages(models.Model):
     id = models.BigAutoField(primary_key=True)
@@ -36,4 +38,4 @@ class Messages(models.Model):
         return f"Message from {self.sender} to {self.receiver} at {self.sent_at}"
 
     class Meta:
-        db_table = '"GadgetHunt"."messages"'  
+        db_table = '"GadgetHunt"."messages"'
