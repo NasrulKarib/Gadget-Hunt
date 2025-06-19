@@ -16,5 +16,6 @@ backend/backend/__pycache__/
 backend/orders/__pycache__/
 backend/products/__pycache__/
 backend/users/__pycache__/
+backend/users/tests/__pycache__/
 
 
