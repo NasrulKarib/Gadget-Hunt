@@ -395,7 +395,7 @@ class FirebaseLoginView(APIView):
             ),
         }
     )
-    
+
     def post(self, request):
         id_token =  request.data.get('id_token')
         if not id_token:

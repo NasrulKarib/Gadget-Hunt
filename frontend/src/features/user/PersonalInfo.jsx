@@ -3,7 +3,7 @@ import axios from 'axios';
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useSelector, useDispatch } from 'react-redux';
-import { setUser } from '../../redux/slices/authSlices';
+import { setUser } from '../auth/authSlices';
 
 const PersonalInfo = () => {
   const [isEditing, setIsEditing] = useState(false);
