@@ -68,11 +68,12 @@ const StockMonitoring = ({ loading }) => {
           <div className="flex items-center gap-2">
             <AlertTriangle size={20} className="text-red-500" />
             <div>
-              <p className="text-sm text-red-600 font-medium">Critical</p>
-              <p className="text-2xl font-bold text-red-700">{criticalStockCount}</p>
+              <p className="text-small text-red-600 font-medium">Critical</p>
+              <p className="text-xl font-bold text-red-700">{criticalStockCount}</p>
             </div>
           </div>
         </div>
+
         <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
           <div className="flex items-center gap-2">
             <Package size={20} className="text-yellow-500" />
@@ -82,6 +83,7 @@ const StockMonitoring = ({ loading }) => {
             </div>
           </div>
         </div>
+        
         <div className="bg-green-50 p-4 rounded-lg border border-green-200">
           <div className="flex items-center gap-2">
             <BarChart3 size={20} className="text-green-500" />
