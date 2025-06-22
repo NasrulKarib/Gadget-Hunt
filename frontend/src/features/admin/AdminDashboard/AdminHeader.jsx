@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Bell, User, Settings, LogOut, X } from 'lucide-react';
+import { Bell, Settings, LogOut, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import {toast} from 'react-toastify';
 
@@ -49,33 +49,12 @@ const AdminHeader = () => {
     setNotifications(mockNotifications);
     setUnreadCount(mockNotifications.filter(n => !n.read).length);
 
-    // Simulate real-time notifications
-    const interval = setInterval(() => {
-      const newNotification = {
-        id: Date.now(),
-        type: Math.random() > 0.5 ? 'order' : 'stock',
-        title: Math.random() > 0.5 ? 'New Order Received' : 'Low Stock Alert',
-        message: Math.random() > 0.5 ? `Order #${Math.floor(Math.random() * 10000)} - $${(Math.random() * 1000 + 100).toFixed(2)}` : `Product XYZ - Only ${Math.floor(Math.random() * 5) + 1} units left`,
-        timestamp: new Date(),
-        read: false
-      };
-
-      setNotifications(prev => [newNotification, ...prev.slice(0, 9)]);
-      setUnreadCount(prev => prev + 1);
-      
-      // Show toast notification
-      toast.success(newNotification.title, {
-        duration: 4000,
-        position: 'top-right'
-      });
-    }, 30000); // Every 30 seconds for demo
-
-    return () => clearInterval(interval);
+  
   }, []);
 
   const handleLogout = () => {
     // Clear localStorage
-    localStorage.clear();
+    sessionStorage.clear();
     
     // Show success message
     toast.success('Logged out successfully!', {

@@ -1,199 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import { 
-  Users, 
-  ShoppingBag, 
-  DollarSign, 
-  TrendingUp, 
-  TrendingDown, 
-  RefreshCw,
-  Calendar,
-  BarChart3,
-  ArrowUpRight,
-  ArrowDownRight,
-  Clock,
-  Package,
-  AlertTriangle
-} from 'lucide-react';
-import {
-  LineChart,
-  Line,
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  PieChart,
-  Pie,
-  Cell
-} from 'recharts';
+import { useState, useEffect } from 'react';
+import { Users, ShoppingBag, DollarSign, RefreshCw, BarChart3, ArrowUpRight, ArrowDownRight, Clock, Package, AlertTriangle} from 'lucide-react';
+import {LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer} from 'recharts';
+import KPICard from './KPICard/KPICard';
+import StockMonitoring from './StockMonitoring/StockMonitoring';
 
-const KPICard = ({ title, value, change, icon: Icon, loading }) => {
-  const isPositive = change >= 0;
-  
-  if (loading) {
-    return (
-      <div className="bg-white p-6 rounded-lg shadow-sm animate-pulse">
-        <div className="flex items-center justify-between">
-          <div className="flex-1">
-            <div className="h-4 bg-gray-200 rounded w-24 mb-2"></div>
-            <div className="h-8 bg-gray-200 rounded w-16"></div>
-          </div>
-          <div className="w-12 h-12 bg-gray-200 rounded-full"></div>
-        </div>
-        <div className="flex items-center mt-4">
-          <div className="h-4 bg-gray-200 rounded w-20"></div>
-        </div>
-      </div>
-    );
-  }
 
-  return (
-    <div className="bg-white p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow">
-      <div className="flex items-center justify-between">
-        <div>
-          <p className="text-sm text-gray-500">{title}</p>
-          <h3 className="text-2xl font-bold mt-1">{value}</h3>
-        </div>
-        <div className={`p-3 rounded-full ${isPositive ? 'bg-green-100' : 'bg-red-100'}`}>
-          <Icon className={isPositive ? 'text-green-600' : 'text-red-600'} size={24} />
-        </div>
-      </div>
-      <div className="flex items-center mt-4">
-        {isPositive ? (
-          <ArrowUpRight size={20} className="text-green-500" />
-        ) : (
-          <ArrowDownRight size={20} className="text-red-500" />
-        )}
-        <span className={`ml-2 text-sm ${isPositive ? 'text-green-500' : 'text-red-500'}`}>
-          {Math.abs(change)}% {isPositive ? 'increase' : 'decrease'}
-        </span>
-        <span className="text-gray-500 text-sm ml-2">vs last month</span>
-      </div>
-    </div>
-  );
-};
 
-const StockMonitoringWidget = ({ loading }) => {
-  const [stockData, setStockData] = useState([
-    { name: 'iPhone 15 Pro', stock: 3, category: 'Phones', lastUpdated: new Date() },
-    { name: 'MacBook Pro M3', stock: 8, category: 'Laptops', lastUpdated: new Date() },
-    { name: 'AirPods Pro', stock: 25, category: 'Accessories', lastUpdated: new Date() },
-    { name: 'iPad Air', stock: 12, category: 'Tablets', lastUpdated: new Date() },
-    { name: 'Apple Watch', stock: 18, category: 'Watches', lastUpdated: new Date() },
-    { name: 'Samsung Galaxy S24', stock: 2, category: 'Phones', lastUpdated: new Date() }
-  ]);
-
-  const getStockStatus = (stock) => {
-    if (stock < 5) return { status: 'critical', color: 'bg-red-100 text-red-800', badge: 'bg-red-500' };
-    if (stock <= 15) return { status: 'low', color: 'bg-yellow-100 text-yellow-800', badge: 'bg-yellow-500' };
-    return { status: 'healthy', color: 'bg-green-100 text-green-800', badge: 'bg-green-500' };
-  };
-
-  const formatTimestamp = (timestamp) => {
-    return timestamp.toLocaleTimeString('en-US', { 
-      hour: '2-digit', 
-      minute: '2-digit' 
-    });
-  };
-
-  const criticalStockCount = stockData.filter(item => item.stock < 5).length;
-  const lowStockCount = stockData.filter(item => item.stock >= 5 && item.stock <= 15).length;
-
-  if (loading) {
-    return (
-      <div className="bg-white rounded-lg shadow-sm p-6">
-        <div className="animate-pulse">
-          <div className="h-6 bg-gray-200 rounded w-48 mb-4"></div>
-          <div className="space-y-4">
-            {[...Array(6)].map((_, index) => (
-              <div key={index} className="flex items-center justify-between p-4 border rounded-lg">
-                <div className="flex items-center gap-3">
-                  <div className="w-3 h-3 bg-gray-200 rounded-full"></div>
-                  <div className="h-4 bg-gray-200 rounded w-32"></div>
-                </div>
-                <div className="h-6 bg-gray-200 rounded w-16"></div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="bg-white rounded-lg shadow-sm p-6">
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h2 className="text-lg font-semibold text-gray-900">Stock Clearance</h2>
-          <p className="text-sm text-gray-500">Monitor inventory levels</p>
-        </div>
-        <div className="flex items-center gap-2 text-sm text-gray-500">
-          <Clock size={16} />
-          <span>Auto-refresh: 5min</span>
-        </div>
-      </div>
-
-      {/* Stock Summary Cards */}
-      <div className="grid grid-cols-3 gap-4 mb-6">
-        <div className="bg-red-50 p-4 rounded-lg border border-red-200">
-          <div className="flex items-center gap-2">
-            <AlertTriangle size={20} className="text-red-500" />
-            <div>
-              <p className="text-sm text-red-600 font-medium">Critical</p>
-              <p className="text-2xl font-bold text-red-700">{criticalStockCount}</p>
-            </div>
-          </div>
-        </div>
-        <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
-          <div className="flex items-center gap-2">
-            <Package size={20} className="text-yellow-500" />
-            <div>
-              <p className="text-sm text-yellow-600 font-medium">Low Stock</p>
-              <p className="text-2xl font-bold text-yellow-700">{lowStockCount}</p>
-            </div>
-          </div>
-        </div>
-        <div className="bg-green-50 p-4 rounded-lg border border-green-200">
-          <div className="flex items-center gap-2">
-            <BarChart3 size={20} className="text-green-500" />
-            <div>
-              <p className="text-sm text-green-600 font-medium">Healthy</p>
-              <p className="text-2xl font-bold text-green-700">{stockData.length - criticalStockCount - lowStockCount}</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Stock Items List */}
-      <div className="space-y-3">
-        {stockData.map((item, index) => {
-          const stockStatus = getStockStatus(item.stock);
-          return (
-            <div key={index} className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50 transition-colors">
-              <div className="flex items-center gap-3">
-                <div className={`w-3 h-3 rounded-full ${stockStatus.badge}`}></div>
-                <div>
-                  <h3 className="font-medium text-gray-900">{item.name}</h3>
-                  <p className="text-sm text-gray-500">{item.category}</p>
-                </div>
-              </div>
-              <div className="text-right">
-                <span className={`px-3 py-1 rounded-full text-sm font-medium ${stockStatus.color}`}>
-                  {item.stock} units
-                </span>
-                <p className="text-xs text-gray-400 mt-1">
-                  Updated: {formatTimestamp(item.lastUpdated)}
-                </p>
-              </div>
-            </div>
-          );
-        })}
-      </div>
-    </div>
-  );
-};
 
 const SalesChart = ({ timeRange, loading, error }) => {
   const salesData = {
@@ -538,7 +350,7 @@ const Overview = () => {
         </div>
       </div>
 
-      {/* KPI Cards */}
+       {/* KPI Cards  */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <KPICard
           title="Total Users"
@@ -609,9 +421,9 @@ const Overview = () => {
         </div>
       </div>
 
-      {/* Stock Clearance */}
+      {/* Stock Monitoring */}
       <div className="grid grid-cols-1 gap-6">
-        <StockMonitoringWidget loading={loading} />
+        <StockMonitoring loading={loading} />
       </div>
 
       {/* Recent Orders */}
