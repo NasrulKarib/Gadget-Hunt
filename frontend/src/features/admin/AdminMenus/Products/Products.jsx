@@ -1,18 +1,22 @@
-import React, { useState } from 'react';
-import { Plus, Search, Filter, MoreVertical, Edit, Trash } from 'lucide-react';
+import  { useState } from 'react';
+import { Plus, Search, Filter, MoreVertical, Edit, Trash, X, Upload, AlertCircle } from 'lucide-react';
+import { toast } from "react-toastify";
+import AddProduct from './AddProduct/AddProduct';
+
 
 const Products = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedItems, setSelectedItems] = useState([]);
-
-  const products = [
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [products, setProducts] = useState([
     {
       id: 1,
       name: 'iPhone 15 Pro',
       sku: 'IP15P-128-BLK',
       price: 999.99,
       stock: 50,
-      category: 'Smartphones',
+      category: 'Phones',
+      brand: 'Apple',
       status: 'Active'
     },
     {
@@ -22,6 +26,7 @@ const Products = () => {
       price: 1999.99,
       stock: 25,
       category: 'Laptops',
+      brand: 'Apple',
       status: 'Active'
     },
     {
@@ -30,7 +35,8 @@ const Products = () => {
       sku: 'APP-2-WHT',
       price: 249.99,
       stock: 100,
-      category: 'Audio',
+      category: 'Accessories',
+      brand: 'Apple',
       status: 'Low Stock'
     },
     {
@@ -40,9 +46,10 @@ const Products = () => {
       price: 599.99,
       stock: 0,
       category: 'Tablets',
+      brand: 'Apple',
       status: 'Out of Stock'
     }
-  ];
+  ]);
 
   const getStatusColor = (status) => {
     switch (status.toLowerCase()) {
@@ -73,11 +80,36 @@ const Products = () => {
     }
   };
 
+  const handleAddProduct = (productData) => {
+    const newProduct = {
+      ...productData,
+      sku: `${productData.brand.substring(0, 3).toUpperCase()}-${Date.now()}`,
+      status: productData.stock > 15 ? 'Active' : productData.stock > 5 ? 'Low Stock' : 'Out of Stock'
+    };
+    
+    setProducts(prev => [newProduct, ...prev]);
+  };
+
+  const handleDeleteProduct = (id) => {
+    setProducts(prev => prev.filter(product => product.id !== id));
+    setSelectedItems(prev => prev.filter(item => item !== id));
+    toast.success('Product deleted successfully!');
+  };
+
+  const filteredProducts = products.filter(product =>
+    product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    product.brand.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    product.category.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Products</h1>
-        <button className="bg-orange-500 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-orange-600">
+        <button 
+          onClick={() => setIsAddModalOpen(true)}
+          className="bg-orange-500 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-orange-600 transition-colors"
+        >
           <Plus size={20} />
           Add Product
         </button>
@@ -112,7 +144,7 @@ const Products = () => {
                 <th className="py-4 px-4">
                   <input
                     type="checkbox"
-                    checked={selectedItems.length === products.length}
+                    checked={selectedItems.length === filteredProducts.length && filteredProducts.length > 0}
                     onChange={handleSelectAll}
                     className="rounded text-orange-500 focus:ring-orange-500"
                   />
@@ -122,12 +154,13 @@ const Products = () => {
                 <th className="text-left py-4 px-4">Price</th>
                 <th className="text-left py-4 px-4">Stock</th>
                 <th className="text-left py-4 px-4">Category</th>
+                <th className="text-left py-4 px-4">Brand</th>
                 <th className="text-left py-4 px-4">Status</th>
                 <th className="text-left py-4 px-4">Actions</th>
               </tr>
             </thead>
             <tbody>
-              {products.map((product) => (
+              {filteredProducts.map((product) => (
                 <tr key={product.id} className="border-b last:border-b-0 hover:bg-gray-50">
                   <td className="py-4 px-4">
                     <input
@@ -142,6 +175,7 @@ const Products = () => {
                   <td className="py-4 px-4">${product.price}</td>
                   <td className="py-4 px-4">{product.stock}</td>
                   <td className="py-4 px-4">{product.category}</td>
+                  <td className="py-4 px-4">{product.brand}</td>
                   <td className="py-4 px-4">
                     <span className={`px-3 py-1 rounded-full text-sm ${getStatusColor(product.status)}`}>
                       {product.status}
@@ -152,7 +186,10 @@ const Products = () => {
                       <button className="p-1 hover:bg-gray-100 rounded">
                         <Edit size={18} className="text-gray-500" />
                       </button>
-                      <button className="p-1 hover:bg-gray-100 rounded">
+                      <button 
+                        onClick={() => handleDeleteProduct(product.id)}
+                        className="p-1 hover:bg-gray-100 rounded"
+                      >
                         <Trash size={18} className="text-red-500" />
                       </button>
                       <button className="p-1 hover:bg-gray-100 rounded">
@@ -165,7 +202,20 @@ const Products = () => {
             </tbody>
           </table>
         </div>
+
+        {filteredProducts.length === 0 && (
+          <div className="text-center py-12">
+            <p className="text-gray-500">No products found</p>
+          </div>
+        )}
       </div>
+
+      {/* Add Product Modal */}
+      <AddProduct
+        isOpen={isAddModalOpen}
+        onClose={() => setIsAddModalOpen(false)}
+        onSubmit={handleAddProduct}
+      />
     </div>
   );
 };

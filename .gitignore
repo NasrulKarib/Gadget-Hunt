@@ -1,24 +1,24 @@
-# Ignore dependencies inside frontend
+# frontend
 frontend/node_modules/
 frontend/package-lock.json
-
-# Ignore build outputs
 frontend/dist/
-
-# Ignore environment and configuration files
 frontend/.env
 
-
+#backend
 venv
 backend/.env
 backend/__pycache__/
 backend/backend/credentials
 backend/backend/__pycache__/
+
 backend/orders/__pycache__/
 backend/orders/migrations/__pycache__/
+
 backend/products/__pycache__/
 backend/products/migrations/__pycache__/
+
 backend/users/__pycache__/
 backend/users/tests/__pycache__/
+backend/users/migrations/__pycache__/
 
 

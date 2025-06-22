@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Search, ShoppingCart, Package, User, Menu, X } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { logout } from '../../redux/slices/authSlices';
+import { logout } from '../features/auth/authSlices';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);

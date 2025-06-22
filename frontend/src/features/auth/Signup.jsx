@@ -6,7 +6,7 @@ import axios from 'axios';
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useDispatch} from 'react-redux';
-import { googleLogin } from '../../redux/slices/authSlices';
+import { googleLogin } from './authSlices';
 import { auth, googleProvider } from '../../firebase';
 import { signInWithPopup } from 'firebase/auth';
 

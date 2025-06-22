@@ -3,7 +3,7 @@ import { Mail, Lock, Eye, EyeOff, ArrowRight, AlertCircle } from 'lucide-react';
 import { FcGoogle } from 'react-icons/fc';
 import { Link, useNavigate } from 'react-router-dom';
 import {useDispatch, useSelector} from 'react-redux';
-import {loginUser, googleLogin} from '../../redux/slices/authSlices'
+import {loginUser, googleLogin} from './authSlices'
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import {auth, googleProvider} from '../../firebase' 

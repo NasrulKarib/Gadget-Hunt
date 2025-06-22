@@ -10,7 +10,7 @@ export const loginUser = createAsyncThunk(
           email,
           password,
         }, { withCredentials: true });
-        localStorage.setItem('user', JSON.stringify(response.data.user));
+        sessionStorage.setItem('user', JSON.stringify(response.data.user));
         return response.data.user;
       } catch (err) {
         console.error(err)
@@ -27,7 +27,7 @@ export const googleLogin = createAsyncThunk(
         const response = await axios.post('http://localhost:8000/api/users/firebase-login/', {
           id_token: idToken,
         }, { withCredentials: true });
-        localStorage.setItem('user', JSON.stringify(response.data.user));
+        sessionStorage.setItem('user', JSON.stringify(response.data.user));
         return response.data.user;
       } catch (err) {
         console.log(err)
@@ -48,14 +48,14 @@ const authSlide = createSlice({
       setUser:(state,action) =>{
         state.user = action.payload;
         if (action.payload) {
-          localStorage.setItem('user', JSON.stringify(action.payload));
+          sessionStorage.setItem('user', JSON.stringify(action.payload));
         }
       },
       logout:(state) => {
         state.user = null;
         state.error = null;
         state.isCheckingAuth = false;
-        localStorage.removeItem('user');
+        sessionStorage.removeItem('user');
       },
     },
     extraReducers: (builder) => {
