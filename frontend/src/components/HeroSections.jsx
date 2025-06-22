@@ -1,10 +1,10 @@
 import React ,{useState, useEffect}from 'react';
 import { ChevronLeft, ChevronRight, Tag, Percent } from 'lucide-react';
-import samsung from '../../assets/s25.jpg';
-import iphone from '../../assets/iphone16.jpg';
-import pixel from '../../assets/pixel.jpg';
-import appleWatch from '../../assets/apple-watch.jpg';
-import sony from '../../assets/sony-headphones.jpg';
+import samsung from '../assets/s25.jpg';
+import iphone from '../assets/iphone16.jpg';
+import pixel from '../assets/pixel.jpg';
+import appleWatch from '../assets/apple-watch.jpg';
+import sony from '../assets/sony-headphones.jpg';
 
 const HeroSection = () => {
   const slides = [

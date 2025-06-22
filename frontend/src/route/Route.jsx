@@ -2,7 +2,7 @@ import React,{useEffect} from 'react';
 import { BrowserRouter as Router, Routes, Route, Outlet,Navigate} from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import {setUser} from '../features/auth/authSlices'
-import Header from '../components/header/Header';
+import Header from '../components/Header';
 import Footer from '../components/Footer';
 import Login from '../features/auth/Login';
 import Signup from '../features/auth/Signup';
@@ -13,11 +13,11 @@ import ProductList from '../features/products/ProductListing'
 import ProductDetails from '../features/products/ProductDetails'
 import BrandMarquee from '../components/BrandMarquee';
 import UserProfile from '../features/user/UserProfile';
-import Admin from '../features/admin/AdminDashboard';
-import Overview from '../features/admin/Overview';
-import Products from '../features/admin/Products';
-import Orders from '../features/admin/Orders';
-import Customers from '../features/admin/Customers'
+import Admin from '../features/admin/AdminDashboard/AdminDashboard';
+import Overview from '../features/admin/AdminMenus/Overviews/Overview';
+import Products from '../features/admin/AdminMenus/Products/Products';
+import Orders from '../features/admin/AdminMenus/Orders/Orders';
+import Customers from '../features/admin/AdminMenus/Customers/Customers'
 import Protected from '../features/auth/Protected'
 
 const HomePage = () => (

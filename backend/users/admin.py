@@ -12,4 +12,5 @@ admin.site.register(Messages)
 class MessagesAdmin(admin.ModelAdmin):
     list_display = ('sender', 'receiver', 'message_text', 'sent_at', 'is_read')
     list_filter = ('is_read', 'sent_at')
-    search_fields = ('message_text',)
+    search_fields = ('message_text')
+
