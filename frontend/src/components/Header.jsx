@@ -22,7 +22,7 @@ const Header = () => {
   };
 
   const handleShop = ()=>{
-    navigate('/shop')
+    navigate('/category')
   }
   const handleLogout = () => {
     dispatch(logout()); // Clear Redux user
