@@ -8,7 +8,7 @@ import Login from '../features/auth/Login';
 import Signup from '../features/auth/Signup';
 import HeroSection from '../components/HeroSections';
 import FeaturedCategories from '../components/FeatureCategories';
-import SliderList from '../components/SliderList';
+import FeatureProducts from '../components/FeatureProducts';
 import ProductList from '../features/products/ProductListing'
 import ProductDetails from '../features/products/ProductDetails'
 import BrandMarquee from '../components/BrandMarquee';
@@ -24,7 +24,7 @@ const HomePage = () => (
   <div className="w-full">
     <HeroSection />
     <FeaturedCategories />
-    <SliderList />
+    <FeatureProducts />
     <BrandMarquee />
   </div>
 );
