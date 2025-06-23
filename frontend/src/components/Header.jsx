@@ -22,7 +22,7 @@ const Header = () => {
   };
 
   const handleShop = ()=>{
-    navigate('/shop')
+    navigate('/category')
   }
   const handleLogout = () => {
     dispatch(logout()); // Clear Redux user
@@ -161,8 +161,8 @@ const Header = () => {
           <div className="overflow-x-auto ">
             <ul className="flex justify-center space-x-8 min-w-max px-4 py-3">
               <li className="text-gray-700 hover:text-orange-500 cursor-pointer whitespace-nowrap" onClick={handleShop}>Phones & Tablets</li>
-              <li className="text-gray-700 hover:text-orange-500 cursor-pointer whitespace-nowrap" onClick={handleShop}>Laptop & Desktop</li>
-              <li className="text-gray-700 hover:text-orange-500 cursor-pointer whitespace-nowrap" onClick={handleShop}>Sound Equipment</li>
+              <li className="text-gray-700 hover:text-orange-500 cursor-pointer whitespace-nowrap" onClick={handleShop}>Laptops</li>
+              <li className="text-gray-700 hover:text-orange-500 cursor-pointer whitespace-nowrap" onClick={handleShop}>Sound Equipments</li>
               <li className="text-gray-700 hover:text-orange-500 cursor-pointer whitespace-nowrap" onClick={handleShop}>Power & Accessories</li>
               <li className="text-gray-700 hover:text-orange-500 cursor-pointer whitespace-nowrap" onClick={handleShop}>Fitness & Wearable</li>
               <li className="text-gray-700 hover:text-orange-500 cursor-pointer whitespace-nowrap" onClick={handleShop}>Cover & Glass</li>

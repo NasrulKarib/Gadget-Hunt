@@ -1,5 +1,6 @@
 import {useState} from 'react';
 import { X, Upload, AlertCircle } from 'lucide-react';
+import { toast } from 'react-toastify';
 
 
 const AddProduct = ({ isOpen, onClose, onSubmit }) => {
@@ -16,11 +17,12 @@ const AddProduct = ({ isOpen, onClose, onSubmit }) => {
   const [imagePreview, setImagePreview] = useState(null);
 
   const categories = [
-    'Phones',
-    'Tablets', 
+    'Phones & Tablets',
     'Laptops',
-    'Watches',
-    'Accessories'
+    'Sound Equipments',
+    'Power & Accessories',
+    'Fitness & Wearable',
+    'Cover & Glass'
   ];
 
   const validateForm = () => {

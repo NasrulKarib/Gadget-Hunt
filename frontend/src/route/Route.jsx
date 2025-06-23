@@ -8,7 +8,7 @@ import Login from '../features/auth/Login';
 import Signup from '../features/auth/Signup';
 import HeroSection from '../components/HeroSections';
 import FeaturedCategories from '../components/FeatureCategories';
-import SliderList from '../components/SliderList';
+import FeatureProducts from '../components/FeatureProducts';
 import ProductList from '../features/products/ProductListing'
 import ProductDetails from '../features/products/ProductDetails'
 import BrandMarquee from '../components/BrandMarquee';
@@ -24,7 +24,7 @@ const HomePage = () => (
   <div className="w-full">
     <HeroSection />
     <FeaturedCategories />
-    <SliderList />
+    <FeatureProducts />
     <BrandMarquee />
   </div>
 );
@@ -43,7 +43,6 @@ const AuthRedirect = ({ children }) => {
   const { user } = useSelector((state) => state.auth);
 
   if (user) {
-    console.log(user.role)
     return <Navigate to={user.role === 'Admin' ? '/admin' : '/'} replace />;
   }
   return children;
@@ -53,7 +52,7 @@ const AppRoutes = () => {
   const dispatch = useDispatch();
 
   useEffect(()=>{
-    const storedUser = localStorage.getItem('user');
+    const storedUser = sessionStorage.getItem('user');
     if(storedUser){
       dispatch(setUser(JSON.parse(storedUser)));
     }
@@ -68,7 +67,7 @@ const AppRoutes = () => {
           <Route path="/login" element={<AuthRedirect> <Login /> </AuthRedirect>} />
           <Route path="/signup" element={<AuthRedirect> <Signup /> </AuthRedirect> } />
           <Route path="/profile" element={<Protected> <UserProfile /> </Protected>} />
-          <Route path="/shop" element={<ProductList />} />
+          <Route path="/category" element={<ProductList />} />
           <Route path="/product/:id" element={<ProductDetails />} />
         </Route>
    
