@@ -5,13 +5,14 @@
 
 - **Product Discovery**: Browse, search, filter, and sort gadgets based on preferences.
 - **Customer Reviews**: Leave ratings and reviews for purchased products.
-- **Seamless Shopping**: Add products to the cart, choose between **Cash on Delivery (COD)** or online payments (**Bkash, Nagad**), and confirm orders.
+- **Seamless Shopping**: Add products to the cart, choose between **Cash on Delivery (COD)** or online payments (**Bkash,SSLCOMMERZ**), and confirm orders.
 - **Order Tracking**: Track orders after confirmation.
 - **Admin Dashboard**:
   - Manage products (add, update, delete).
   - Apply coupons and special offers.
   - Update order statuses.
   - Communicate with customers regarding issues.
+  - View product and customer related charts.
 
 GadgetHunt ensures a smooth and efficient shopping experience for tech enthusiasts while providing sellers with powerful tools to manage their inventory.
 
@@ -19,60 +20,35 @@ GadgetHunt ensures a smooth and efficient shopping experience for tech enthusias
 
 ## Technologies Used
 
-| Component      | Technology | Description |
-|--------------|------------|-------------|
-| **Frontend**  | React      | A JavaScript library for building interactive user interfaces. |
-| **Backend**   | Django     | A high-level Python web framework for rapid and secure development. |
-| **Database**  | PostgreSQL | A powerful, open-source relational database system. |
-| **Version Control** | GitHub | A platform for managing and collaborating on code using Git. |
+| Component          | Technology   | Description                                                                 |
+|--------------------|--------------|-----------------------------------------------------------------------------|
+| **Frontend**        | React        | A JavaScript library for building interactive user interfaces.              |
+| **Backend**         | Django       | A high-level Python web framework for rapid and secure development.         |
+| **Database**        | PostgreSQL   | A powerful, open-source relational database system.                         |
+| **Charts & Analytics** | Recharts    | A composable charting library built on React for data visualization.       |
+| **Containerization** | Docker       | A tool to create, deploy, and run applications in isolated containers.      |
+| **Version Control** | GitHub       | A platform for managing and collaborating on code using Git.               |
+
 
 ## ER Diagram
 ![ER Diagram](GadgetHunt.png)
 ### Database Schema
 
-#### 1. Users
-- **Description**: Stores user information, including customers and admins, with role-based access.
-- **Columns**: `id (PK)`, `email`, `password`, `name`, `address`, `phone`, `role`, `created_at`.
 
-#### 2. Categories
-- **Description**: Manages product categories (e.g., smartphones, laptops).
-- **Columns**: `id (PK)`, `name`, `description`.
+| Table Name       | Description                                                  |
+|------------------|--------------------------------------------------------------|
+| Users            | Stores user information, including customers and admins, with role-based access. |
+| Categories       | Manages product categories (e.g., smartphones, laptops).      |
+| Products         | Holds details of smart gadgets available for sale.            |
+| Orders           | Tracks customer orders, including payment and coupon details. |
+| Order Items      | Contains individual products within an order.                 |
+| Shopping Cart    | Stores items added to a user’s shopping cart.                 |
+| Reviews          | Captures customer reviews and ratings for products.           |
+| Coupons          | Manages discount codes for promotions.                        |
+| Payments         | Records payment transactions for orders.                      |
+| Browsing History | Tracks products viewed by users for recommendations.          |
+| Messages         | Facilitates live chat between customers and admins.           |
 
-#### 3. Products
-- **Description**: Holds details of smart gadgets available for sale.
-- **Columns**: `id (PK)`, `name`, `description`, `price`, `stock_quantity`, `category_id (FK)`, `brand`, `image_url`, `created_at`, `updated_at`.
-
-#### 4. Orders
-- **Description**: Tracks customer orders, including payment and coupon details.
-- **Columns**: `id (PK)`, `user_id (FK)`, `total_price`, `discount_applied`, `final_price`, `status`, `payment_method`, `payment_status`, `coupon_id (FK)`, `created_at`, `updated_at`, `tracking_number`.
-
-#### 5. Order Items
-- **Description**: Contains individual products within an order.
-- **Columns**: `id (PK)`, `order_id (FK)`, `product_id (FK)`, `quantity`, `unit_price`, `subtotal`.
-
-#### 6. Shopping Cart
-- **Description**: Stores items added to a user’s shopping cart.
-- **Columns**: `id (PK)`, `user_id (FK)`, `product_id (FK)`, `quantity`.
-
-#### 7. Reviews
-- **Description**: Captures customer reviews and ratings for products.
-- **Columns**: `id (PK)`, `user_id (FK)`, `product_id (FK)`, `rating`, `review_text`, `created_at`, `is_reported`.
-
-#### 8. Coupons
-- **Description**: Manages discount codes for promotions.
-- **Columns**: `id (PK)`, `code`, `discount_value`, `discount_type`, `valid_from`, `valid_until`, `is_active`.
-
-#### 9. Payments
-- **Description**: Records payment transactions for orders.
-- **Columns**: `id (PK)`, `order_id (FK)`, `amount`, `payment_method`, `transaction_id`, `status`, `created_at`.
-
-#### 10. Browsing History
-- **Description**: Tracks products viewed by users for recommendations.
-- **Columns**: `id (PK)`, `user_id (FK)`, `product_id (FK)`, `viewed_at`.
-
-#### 11. Messages
-- **Description**: Facilitates live chat between customers and admins.
-- **Columns**: `id (PK)`, `sender_id (FK)`, `receiver_id (FK)`, `message_text`, `sent_at`, `is_read`.
 
 ## Docker Setup and Usage
 
@@ -140,3 +116,39 @@ Profile contains user info, address and user can update their profile
 ![alt text](./frontend/src/assets/readme/Profile/profile3.png)
 ![alt text](./frontend/src/assets/readme/Profile/profile4.png)
 
+### Admin
+A fully responsive and feature-rich **Admin Dashboard** for managing an GadgetHunt, designed for performance, clarity, and real-time insights.
+
+#### Overview
+📌**KPI Cards**: Displays total users, total orders, and total revenue at a glance.\
+📈**Sales Analytics**: Visualizes sales trends by day, week, and month, along with top sold products.
+
+![alt text](./frontend/src/assets/readme/Admin/admin_overview1.png)
+
+
+🚨**Stock Clearance**: Highlights low-stock products and items nearing depletion.
+
+![alt text](./frontend/src/assets/readme/Admin/admin_overview2.png)
+
+
+#### Products
+
+➕ **Product Management**: Allows the admin to add new products with details like name, description, price, stock, brand, category, and image.\
+🧾 **Latest Products**: Displays a list of recently added products for quick monitoring.
+
+![alt text](./frontend/src/assets/readme/Admin/admin_Products.png)
+![alt text](./frontend/src/assets/readme/Admin/admin_AddProducts.png)
+
+
+#### Orders
+
+📬 **Recent Orders**: Shows a real-time list of customer orders including order ID, product summary, user details, date, and order status.
+
+![alt text](./frontend/src/assets/readme/Admin/admin_orders.png)
+
+
+#### Customers
+
+🆕 **Recent Customers**: Lists newly registered users along with their join dates and basic profile info.
+
+![alt text](./frontend/src/assets/readme/Admin/admin_customers.png)
