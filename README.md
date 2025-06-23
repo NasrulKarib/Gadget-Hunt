@@ -104,7 +104,7 @@ The homepage provides an overview of the platform, showcasing latest offers, dev
 
 ![alt text](./frontend/src/assets/readme/Home/1.png)
 ![alt text](./frontend/src/assets/readme/Home/2.png)
-![alt text](./frontend/src/assets/readme/Home/3.png)
+![alt text](./frontend/src/assets/readme/Home/featureProducts.png)
 ![alt text](./frontend/src/assets/readme/Home/4.png)
 ![alt text](./frontend/src/assets/readme/Home/5.png)
 
