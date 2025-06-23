@@ -136,7 +136,7 @@ A fully responsive and feature-rich **Admin Dashboard** for managing an GadgetHu
 ➕ **Product Management**: Allows the admin to add new products with details like name, description, price, stock, brand, category, and image.\
 🧾 **Latest Products**: Displays a list of recently added products for quick monitoring.
 
-![alt text](./frontend/src/assets/readme/Admin/admin_Products.png)
+![alt text](./frontend/src/assets/readme/Admin/admin_products.png)
 ![alt text](./frontend/src/assets/readme/Admin/admin_AddProducts.png)
 
 
