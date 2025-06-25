@@ -23,10 +23,10 @@ class SignupView(APIView):
             type=openapi.TYPE_OBJECT,
             required=['email', 'password', 'name'],
             properties={
-                'email': openapi.Schema(type=openapi.TYPE_STRING, description='User email address'),
-                'password': openapi.Schema(type=openapi.TYPE_STRING, description='User password (minimum 8 characters)'),
-                'name': openapi.Schema(type=openapi.TYPE_STRING, description='Full name of the user'),
-                'role': openapi.Schema(type=openapi.TYPE_STRING, description='User role (Admin or Customer)', default='Customer'),
+                'email': openapi.Schema(type=openapi.TYPE_STRING, format='email', description='User email address', example='user@example.com'),
+                'password': openapi.Schema(type=openapi.TYPE_STRING, description='User password (minimum 8 characters)', example='Secret123'),
+                'name': openapi.Schema(type=openapi.TYPE_STRING, description='Full name of the user', example='User'),
+                'role': openapi.Schema(type=openapi.TYPE_STRING, description='User role (Admin or Customer)', default='Customer', example='Customer'),
             },
         ),
         responses={
@@ -39,7 +39,7 @@ class SignupView(APIView):
                             type=openapi.TYPE_OBJECT,
                             properties={
                                 'id': openapi.Schema(type=openapi.TYPE_INTEGER),
-                                'email': openapi.Schema(type=openapi.TYPE_STRING),
+                                'email': openapi.Schema(type=openapi.TYPE_STRING, format='email'),
                                 'name': openapi.Schema(type=openapi.TYPE_STRING),
                                 'role': openapi.Schema(type=openapi.TYPE_STRING),
                                 'created_at': openapi.Schema(type=openapi.TYPE_STRING, format='date-time'),
@@ -48,9 +48,22 @@ class SignupView(APIView):
                     }
                 )
             ),
-            400: "Bad Request - Invalid data"
+            400: openapi.Response(
+                description="Invalid input data",
+                schema=openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        "errors": openapi.Schema(
+                            type=openapi.TYPE_OBJECT,
+                            additional_properties=openapi.Schema(type=openapi.TYPE_STRING),
+                            description="Validation error details"
+                        )
+                    }
+                )
+            )
         }
     )
+
     
     def post(self, request):
         serializer = UserSerializer(data=request.data)
@@ -74,8 +87,8 @@ class LoginView(APIView):
             type=openapi.TYPE_OBJECT,
             required=['email', 'password'],
             properties={
-                'email': openapi.Schema(type=openapi.TYPE_STRING, description='User email address'),
-                'password': openapi.Schema(type=openapi.TYPE_STRING, description='User password'),
+                'email': openapi.Schema(type=openapi.TYPE_STRING, description='User email address', example='user@example.com'),
+                'password': openapi.Schema(type=openapi.TYPE_STRING, description='User password', example='secret123'),
             },
         ),
         responses={
@@ -97,7 +110,15 @@ class LoginView(APIView):
                     }
                 )
             ),
-            400: "Bad Request - Invalid credentials"
+            400: openapi.Response(
+                description="Invalid credentials",
+                schema=openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'detail': openapi.Schema(type=openapi.TYPE_STRING, description='Error message', example='Invalid email or password')
+                    }
+                )
+            )
         }
     )
 
@@ -142,6 +163,41 @@ class GetProfileView(APIView):
 
     permission_classes = [IsAuthenticated]
 
+      
+    @swagger_auto_schema(
+        operation_description="Retrieve the profile information of the authenticated user.",
+        responses={
+            200: openapi.Response(
+                description="User profile retrieved successfully",
+                schema=openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'message': openapi.Schema(type=openapi.TYPE_STRING, description='Success message', example="User profile retrieved successfully"),
+                        'user': openapi.Schema(
+                            type=openapi.TYPE_OBJECT,
+                            properties={
+                                'id': openapi.Schema(type=openapi.TYPE_INTEGER, description='User ID', example=1),
+                                'email': openapi.Schema(type=openapi.TYPE_STRING, format='email', description='User email', example='user@example.com'),
+                                'name': openapi.Schema(type=openapi.TYPE_STRING, description='User name', example='John Doe'),
+                                'role': openapi.Schema(type=openapi.TYPE_STRING, description='User role', example='Customer'),
+                            }
+                        )
+                    }
+                )
+            ),
+            404: openapi.Response(
+                description="User not found",
+                schema=openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'details': openapi.Schema(type=openapi.TYPE_STRING, description='Error message', example="User not found")
+                    }
+                )
+            )
+        },
+        security=[{'Bearer': []}]
+    )
+
     def get(self, request):
         user = request.user
         try:
@@ -155,8 +211,68 @@ class GetProfileView(APIView):
             "message" : "User profile retrieved successfully",
             "user": serializer.data
         }, status=status.HTTP_200_OK)
+    
 class UpdateProfileView(APIView):
     permission_classes = [IsAuthenticated]
+
+        
+    @swagger_auto_schema(
+        operation_description="Update the profile information of the authenticated user.",
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                'name': openapi.Schema(type=openapi.TYPE_STRING, description='User name', example='Jane Doe'),
+                'email': openapi.Schema(type=openapi.TYPE_STRING, format='email', description='User email', example='jane@example.com'),
+                'phone': openapi.Schema(type=openapi.TYPE_STRING, description='User phone number', example='0123456789'),
+                'address': openapi.Schema(type=openapi.TYPE_STRING, description='User address', example='123 Street, City'),
+                'role': openapi.Schema(type=openapi.TYPE_STRING, description='User role', example='Customer'),
+            }
+        ),
+        responses={
+            200: openapi.Response(
+                description="Profile updated successfully",
+                schema=openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'message': openapi.Schema(type=openapi.TYPE_STRING, description='Success message', example='Profile updated successfully'),
+                        'user': openapi.Schema(
+                            type=openapi.TYPE_OBJECT,
+                            properties={
+                                'name': openapi.Schema(type=openapi.TYPE_STRING, description='User name'),
+                                'email': openapi.Schema(type=openapi.TYPE_STRING, description='User email', format='email'),
+                                'phone': openapi.Schema(type=openapi.TYPE_STRING, description='User phone number'),
+                                'address': openapi.Schema(type=openapi.TYPE_STRING, description='User address'),
+                                'role': openapi.Schema(type=openapi.TYPE_STRING, description='User role'),
+                            }
+                        )
+                    }
+                )
+            ),
+            400: openapi.Response(
+                description="Invalid input data",
+                schema=openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'errors': openapi.Schema(
+                            type=openapi.TYPE_OBJECT,
+                            additional_properties=openapi.Schema(type=openapi.TYPE_STRING),
+                            description='Validation error messages'
+                        )
+                    }
+                )
+            ),
+            404: openapi.Response(
+                description="User not found",
+                schema=openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'details': openapi.Schema(type=openapi.TYPE_STRING, description='Error message', example='User not found')
+                    }
+                )
+            )
+        },
+        security=[{'Bearer': []}]  # Ensure your swagger config defines "Bearer"
+    )
 
     def patch(self, request):
         user = request.user
@@ -184,6 +300,31 @@ class AdminDashboardView(APIView):
 
     permission_classes = [IsAuthenticated]
 
+    @swagger_auto_schema(
+        operation_description="Access Admin Dashboard - requires user to have Admin role.",
+        responses={
+            200: openapi.Response(
+                description="Welcome message for Admin",
+                schema=openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'message': openapi.Schema(type=openapi.TYPE_STRING, example="Welcome to Admin Dashboard")
+                    }
+                ),
+            ),
+            401: openapi.Response(
+                description="Unauthorized - Admin access required",
+                schema=openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'message': openapi.Schema(type=openapi.TYPE_STRING, example="Admin Access required")
+                    }
+                )
+            )
+        },
+        security=[{'Bearer': []}]
+    )
+
     def get(self, request):
         user = Users.objects.get(id=request.user.id)
         role = user.role
@@ -197,6 +338,64 @@ class FirebaseLoginView(APIView):
 
     permission_classes = [AllowAny]
 
+    @swagger_auto_schema(
+        operation_description="Authenticate user with Firebase ID token. Sets JWT cookies on success.",
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            required=['id_token'],
+            properties={
+                'id_token': openapi.Schema(type=openapi.TYPE_STRING, description='Firebase ID token', example='eyJhbGciOiJSUzI1NiIsImtpZCI6Ij...'),
+            },
+        ),
+        responses={
+            200: openapi.Response(
+                description="Login successful, JWT tokens set in HttpOnly cookies",
+                schema=openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'message': openapi.Schema(type=openapi.TYPE_STRING, example='Login successful'),
+                        'user': openapi.Schema(
+                            type=openapi.TYPE_OBJECT,
+                            properties={
+                                'id': openapi.Schema(type=openapi.TYPE_INTEGER, example=123),
+                                'email': openapi.Schema(type=openapi.TYPE_STRING, format='email', example='user@example.com'),
+                                'name': openapi.Schema(type=openapi.TYPE_STRING, example='John Doe'),
+                                'role': openapi.Schema(type=openapi.TYPE_STRING, example='Customer'),
+                            }
+                        )
+                    }
+                )
+            ),
+            400: openapi.Response(
+                description="Bad Request - Missing or invalid ID token",
+                schema=openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'message': openapi.Schema(type=openapi.TYPE_STRING, example='Id_token is required or Email is not found in token'),
+                    }
+                )
+            ),
+            401: openapi.Response(
+                description="Unauthorized - Invalid ID token",
+                schema=openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'detail': openapi.Schema(type=openapi.TYPE_STRING, example='Invalid ID token'),
+                    }
+                )
+            ),
+            500: openapi.Response(
+                description="Internal Server Error",
+                schema=openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'detail': openapi.Schema(type=openapi.TYPE_STRING, example='Unexpected error message'),
+                    }
+                )
+            ),
+        }
+    )
+
     def post(self, request):
         id_token =  request.data.get('id_token')
         if not id_token:
@@ -204,10 +403,8 @@ class FirebaseLoginView(APIView):
         
         try:
             decode_token = auth.verify_id_token(id_token)
-            print(decode_token)
             email = decode_token.get('email')
             name = decode_token.get('name')
-            image = decode_token.get('picture')
 
             if not email:
                 return Response({"message":"Email is not found in token"},status=status.HTTP_400_BAD_REQUEST)
@@ -217,7 +414,6 @@ class FirebaseLoginView(APIView):
                 defaults = {
                     'name': name,
                     'password': str(uuid.uuid4()),  # Generate a random password
-                    'image': image
                 }
                
             )
@@ -258,6 +454,7 @@ class FirebaseLoginView(APIView):
         except auth.InvalidIdTokenError:
             return Response({'detail': 'Invalid ID token'}, status=status.HTTP_401_UNAUTHORIZED)
         except Exception as e:
+            print(str(e))
             return Response({'detail': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
 class FirebaseSignupView(APIView):

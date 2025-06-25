@@ -1,30 +1,30 @@
 import React,{useEffect} from 'react';
 import { BrowserRouter as Router, Routes, Route, Outlet,Navigate} from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import {setUser} from '../redux/slices/authSlices'
-import Header from '../components/header/Header';
-import Footer from '../components/footer/Footer';
-import Login from '../components/auth/Login';
-import Signup from '../components/auth/Signup';
-import HeroSection from '../components/main/HeroSections';
-import FeaturedCategories from '../components/main/FeatureCategories';
-import ProductCard from '../components/main/ProductCard';
-import ProductList from '../components/shop/ProductListing'
-import ProductDetails from '../components/shop/ProductDetails'
-import BrandMarquee from '../components/main/BrandMarquee';
-import UserProfile from '../components/userProfile/UserProfile';
-import Admin from '../components/admin/AdminDashboard';
-import Overview from '../components/admin/Overview';
-import Products from '../components/admin/Products';
-import Orders from '../components/admin/Orders';
-import Customers from '../components/admin/Customers'
-import Protected from '../components/auth/Protected'
+import {setUser} from '../features/auth/authSlices'
+import Header from '../components/Header';
+import Footer from '../components/Footer';
+import Login from '../features/auth/Login';
+import Signup from '../features/auth/Signup';
+import HeroSection from '../components/HeroSections';
+import FeaturedCategories from '../components/FeatureCategories';
+import FeatureProducts from '../components/FeatureProducts';
+import ProductList from '../features/products/ProductListing'
+import ProductDetails from '../features/products/ProductDetails'
+import BrandMarquee from '../components/BrandMarquee';
+import UserProfile from '../features/user/UserProfile';
+import Admin from '../features/admin/AdminDashboard/AdminDashboard';
+import Overview from '../features/admin/AdminMenus/Overviews/Overview';
+import Products from '../features/admin/AdminMenus/Products/Products';
+import Orders from '../features/admin/AdminMenus/Orders/Orders';
+import Customers from '../features/admin/AdminMenus/Customers/Customers'
+import Protected from '../features/auth/Protected'
 
 const HomePage = () => (
   <div className="w-full">
     <HeroSection />
     <FeaturedCategories />
-    <ProductCard />
+    <FeatureProducts />
     <BrandMarquee />
   </div>
 );
@@ -52,7 +52,7 @@ const AppRoutes = () => {
   const dispatch = useDispatch();
 
   useEffect(()=>{
-    const storedUser = localStorage.getItem('user');
+    const storedUser = sessionStorage.getItem('user');
     if(storedUser){
       dispatch(setUser(JSON.parse(storedUser)));
     }
@@ -67,11 +67,13 @@ const AppRoutes = () => {
           <Route path="/login" element={<AuthRedirect> <Login /> </AuthRedirect>} />
           <Route path="/signup" element={<AuthRedirect> <Signup /> </AuthRedirect> } />
           <Route path="/profile" element={<Protected> <UserProfile /> </Protected>} />
-          <Route path="/shop" element={<ProductList />} />
+          <Route path="/category" element={<ProductList />} />
           <Route path="/product/:id" element={<ProductDetails />} />
         </Route>
    
         {/* Admin Routes */}
+        <Route path="/admin" element={<Navigate to="/admin/overview" replace />} />
+        
         <Route path="/admin" element={<Protected requireAdmin> <Admin /> </Protected>}>
           <Route path="overview" element={<Overview />} />
           <Route path="products" element={<Products />} />
