@@ -17,7 +17,7 @@ class Products(models.Model):
     name = models.CharField(max_length=200)
     description = models.TextField(blank=True, null=True)
     price = models.DecimalField(max_digits=10, decimal_places=2)
-    stock_quantity = models.PositiveIntegerField()
+    stock = models.PositiveIntegerField()
     category = models.ForeignKey(Categories, on_delete=models.CASCADE, related_name='products')
     brand = models.CharField(max_length=100)
     image_url = models.URLField(max_length=500)
