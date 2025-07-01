@@ -14,6 +14,11 @@ const AdminSidebar = () => {
       path: '/admin/overview'
     },
     {
+      title: 'Categories',
+      icon: Users,
+      path: '/admin/categories'
+    },
+    {
       title: 'Products',
       icon: Package,
       path: '/admin/products'
@@ -27,7 +32,13 @@ const AdminSidebar = () => {
       title: 'Customers',
       icon: Users,
       path: '/admin/customers'
+    },
+    {
+      title: 'Profile',
+      icon: Users,
+      path: '/admin/profile'
     }
+    
   ];
 
   return (
