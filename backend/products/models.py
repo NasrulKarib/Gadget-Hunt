@@ -1,4 +1,5 @@
 from django.db import models
+from django.core.exceptions import ValidationError
 import uuid
 
 class Categories(models.Model):
@@ -26,6 +27,7 @@ class Products(models.Model):
 
     def __str__(self):
         return self.name
+    
 
     class Meta:
         db_table = '"GadgetHunt"."products"'  
