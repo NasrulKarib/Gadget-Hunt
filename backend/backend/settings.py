@@ -154,6 +154,9 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "https://gadget-hunt.vercel.app"  # Allow frontend running on localhost
 ]
+CSRF_TRUSTED_ORIGINS = [
+    "https://gadget-hunt.vercel.app"
+]
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
