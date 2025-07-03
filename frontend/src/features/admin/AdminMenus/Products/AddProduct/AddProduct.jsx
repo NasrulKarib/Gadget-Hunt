@@ -1,5 +1,5 @@
 import {useState} from 'react';
-import { X, Upload, AlertCircle } from 'lucide-react';
+import { X, Upload, AlertCircle, Loader2} from 'lucide-react';
 import { toast } from 'react-toastify';
 
 
@@ -11,10 +11,12 @@ const AddProduct = ({ isOpen, onClose, onSubmit }) => {
     stock: '',
     category: '',
     brand: '',
-    image: null
+    image: null,
+    image_url: null
   });
   const [errors, setErrors] = useState({});
   const [imagePreview, setImagePreview] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const categories = [
     'Phones & Tablets',
@@ -54,45 +56,59 @@ const AddProduct = ({ isOpen, onClose, onSubmit }) => {
       newErrors.brand = 'Brand is required';
     }
 
-    if (!formData.image) {
-      newErrors.brand = 'Image is required';
+    if (!formData.image && !imagePreview) {
+      newErrors.image = 'Product image is required';
     }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async(e) => {
     e.preventDefault();
     
+
     if (validateForm()) {
-      const productData = {
-        ...formData,
-        price: parseFloat(formData.price).toFixed(2),
-        stock: parseInt(formData.stock),
-        id: Date.now() // Generate a simple ID
-      };
-      
-      console.log('Product Data:', productData);
-      onSubmit(productData);
-      
-      // Reset form
-      setFormData({
-        name: '',
-        description: '',
-        price: '',
-        stock: '',
-        category: '',
-        brand: '',
-        image: null
-      });
-      setImagePreview(null);
-      setErrors({});
-      
-      toast.success('Product added successfully!', {
-        duration: 3000,
-        position: 'top-center'
-      });
+      setIsLoading(true);
+
+      try {
+        const imageUrl = await handleCloudinaryUpload(formData.image);
+        const productData = {
+          ...formData,
+          price: parseFloat(formData.price).toFixed(2),
+          stock: parseInt(formData.stock),
+          image_url: imageUrl
+        };
+        
+        console.log('Product Data:', productData);
+        onSubmit(productData);
+        
+        // Reset form
+        setFormData({
+          name: '',
+          description: '',
+          price: '',
+          stock: '',
+          category: '',
+          brand: '',
+          image: null,
+          image_url: null
+        });
+        setImagePreview(null);
+        setErrors({});
+        
+        toast.success('Product added successfully!', {
+          duration: 3000,
+          position: 'top-center'
+        });
+        
+        onClose();
+      } catch (error) {
+        console.error('Error submitting form:', error);
+        toast.error('Failed to add product. Please try again.');
+      } finally {
+        setIsLoading(false); 
+      }
       
       onClose();
     }
@@ -101,9 +117,9 @@ const AddProduct = ({ isOpen, onClose, onSubmit }) => {
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setFormData({ ...formData, image: file });
-      
-      // Create preview
+      setFormData(prev => ({ ...prev, image: file }));
+
+      // Create an image preview 
       const reader = new FileReader();
       reader.onloadend = () => {
         setImagePreview(reader.result);
@@ -111,6 +127,27 @@ const AddProduct = ({ isOpen, onClose, onSubmit }) => {
       reader.readAsDataURL(file);
     }
   };
+
+  const handleCloudinaryUpload = async (file) => {
+      const formDataCloud = new FormData();
+      formDataCloud.append('file', file);
+      formDataCloud.append('upload_preset', 'GadgetHunt');
+      formDataCloud.append('cloud_name', 'dxus6vmjx');
+
+      try{
+        const res =  await fetch('https://api.cloudinary.com/v1_1/dxus6vmjx/image/upload', {
+          method: 'POST',
+          body: formDataCloud
+        })
+        const json = await res.json();
+        const imageUrl = json.secure_url;
+
+        return imageUrl;
+      } catch(error){
+        toast.error('Image upload failed.')
+        return error;
+      }
+  }
 
   const handleClose = () => {
     setFormData({
@@ -120,7 +157,8 @@ const AddProduct = ({ isOpen, onClose, onSubmit }) => {
       stock: '',
       category: '',
       brand: '',
-      image: null
+      image: null,
+      image_url: null
     });
     setImagePreview(null);
     setErrors({});
@@ -137,6 +175,7 @@ const AddProduct = ({ isOpen, onClose, onSubmit }) => {
           <button
             onClick={handleClose}
             className="p-2 hover:bg-gray-100 rounded-full"
+            disabled={isLoading}
           >
             <X size={20} />
           </button>
@@ -151,7 +190,7 @@ const AddProduct = ({ isOpen, onClose, onSubmit }) => {
             <input
               type="text"
               value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
               className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 ${
                 errors.name ? 'border-red-500' : 'border-gray-300'
               }`}
@@ -177,7 +216,7 @@ const AddProduct = ({ isOpen, onClose, onSubmit }) => {
             </label>
             <textarea
               value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+              onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
               className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 ${
                 errors.description ? 'border-red-500' : 'border-gray-300'
               }`}
@@ -202,7 +241,7 @@ const AddProduct = ({ isOpen, onClose, onSubmit }) => {
                 type="number"
                 step="1"
                 value={formData.price}
-                onChange={(e) => setFormData({ ...formData, price: e.target.value })}
+                onChange={(e) => setFormData(prev => ({ ...prev, price: e.target.value }))}
                 className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 ${
                   errors.price ? 'border-red-500' : 'border-gray-300'
                 }`}
@@ -223,7 +262,7 @@ const AddProduct = ({ isOpen, onClose, onSubmit }) => {
               <input
                 type="number"
                 value={formData.stock}
-                onChange={(e) => setFormData({ ...formData, stock: e.target.value })}
+                onChange={(e) => setFormData(prev => ({ ...prev, stock: e.target.value }))}
                 className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 ${
                   errors.stock ? 'border-red-500' : 'border-gray-300'
                 }`}
@@ -247,7 +286,7 @@ const AddProduct = ({ isOpen, onClose, onSubmit }) => {
               </label>
               <select
                 value={formData.category}
-                onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                onChange={(e) => setFormData(prev => ({ ...prev, category: e.target.value }))}
                 className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 ${
                   errors.category ? 'border-red-500' : 'border-gray-300'
                 }`}
@@ -274,7 +313,7 @@ const AddProduct = ({ isOpen, onClose, onSubmit }) => {
               <input
                 type="text"
                 value={formData.brand}
-                onChange={(e) => setFormData({ ...formData, brand: e.target.value })}
+                onChange={(e) => setFormData(prev => ({ ...prev, brand: e.target.value }))}
                 className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 ${
                   errors.brand ? 'border-red-500' : 'border-gray-300'
                 }`}
@@ -334,6 +373,12 @@ const AddProduct = ({ isOpen, onClose, onSubmit }) => {
                 </div>
               )}
             </div>
+            {errors.image && (
+              <p className="mt-1 text-sm text-red-500 flex items-center gap-1">
+                <AlertCircle size={16} />
+                {errors.image}
+              </p>
+            )}
           </div>
 
           {/* Form Actions */}
@@ -342,14 +387,22 @@ const AddProduct = ({ isOpen, onClose, onSubmit }) => {
               type="button"
               onClick={handleClose}
               className="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+              disabled={isLoading}
             >
               Cancel
             </button>
             <button
               type="submit"
               className="px-6 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors"
+              disabled={isLoading}
             >
-              Add Product
+              {isLoading ? (
+                <>
+                  <Loader2 size={16} className="text-center animate-spin" />
+                </>
+              ) : (
+                'Add Product'
+              )}
             </button>
           </div>
         </form>

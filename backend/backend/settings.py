@@ -102,6 +102,8 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.AllowAny',
     ],
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10,  # Default page size for pagination
 }
 
 
@@ -149,7 +151,8 @@ STATIC_URL = 'static/'
 
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",  # Allow frontend running on localhost
+    "http://localhost:5173",
+    "https://gadget-hunt.vercel.app/"  # Allow frontend running on localhost
 ]
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

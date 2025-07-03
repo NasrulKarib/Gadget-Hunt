@@ -16,6 +16,8 @@ import UserProfile from '../features/user/UserProfile';
 import Admin from '../features/admin/AdminDashboard/AdminDashboard';
 import Overview from '../features/admin/AdminMenus/Overviews/Overview';
 import Products from '../features/admin/AdminMenus/Products/Products';
+import Profile from '../features/admin/AdminMenus/Profile/Profile';
+import Categories from '../features/admin/AdminMenus/Categories/Categories';
 import Orders from '../features/admin/AdminMenus/Orders/Orders';
 import Customers from '../features/admin/AdminMenus/Customers/Customers'
 import Protected from '../features/auth/Protected'
@@ -79,6 +81,8 @@ const AppRoutes = () => {
           <Route path="products" element={<Products />} />
           <Route path="orders" element={<Orders />} />
           <Route path ="customers" element={<Customers />} />
+          <Route path ="profile" element={<Profile />} />
+          <Route path ="categories" element={<Categories />} />
         </Route>
       </Routes>
     </Router>

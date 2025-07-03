@@ -15,8 +15,6 @@ import uuid
 class SignupView(APIView):
 
 
-    permission_classes = [AllowAny]
-
     @swagger_auto_schema(
         operation_description="Register a new user and return JWT tokens.",
         request_body=openapi.Schema(
@@ -79,7 +77,6 @@ class SignupView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 class LoginView(APIView):
-    permission_classes = [AllowAny]
 
     @swagger_auto_schema(
         operation_description="Log in a user and set JWT tokens in HttpOnly cookies.",
@@ -336,7 +333,6 @@ class AdminDashboardView(APIView):
                 
 class FirebaseLoginView(APIView):
 
-    permission_classes = [AllowAny]
 
     @swagger_auto_schema(
         operation_description="Authenticate user with Firebase ID token. Sets JWT cookies on success.",
@@ -458,7 +454,6 @@ class FirebaseLoginView(APIView):
             return Response({'detail': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
 class FirebaseSignupView(APIView):
-    permission_classes = [AllowAny]
 
     def post(self, request):
         # For Firebase, signup and login can be handled similarly
