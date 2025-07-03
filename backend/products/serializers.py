@@ -23,6 +23,7 @@ class ProductCreateSerializer(serializers.ModelSerializer):
         return value
 
 class ProductResponseSerializer(serializers.ModelSerializer):
+    category = CategorySerializer(read_only=True) #nested serializer
 
     class Meta:
         model = Products
