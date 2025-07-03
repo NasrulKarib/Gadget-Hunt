@@ -152,7 +152,7 @@ STATIC_URL = 'static/'
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
-    "https://gadget-hunt.vercel.app/"  # Allow frontend running on localhost
+    "https://gadget-hunt.vercel.app"  # Allow frontend running on localhost
 ]
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
