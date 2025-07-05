@@ -1,9 +1,9 @@
 import {useState} from 'react';
 import { X, Upload, AlertCircle, Loader2} from 'lucide-react';
 import { toast } from 'react-toastify';
+import {createProduct} from '../../../../../services/productService';
 
-
-const AddProduct = ({ isOpen, onClose, onSubmit }) => {
+const AddProduct = ({ isOpen, onClose, onProductAdded }) => {
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -80,29 +80,35 @@ const AddProduct = ({ isOpen, onClose, onSubmit }) => {
           image_url: imageUrl
         };
         
-        console.log('Product Data:', productData);
-        onSubmit(productData);
-        
-        // Reset form
-        setFormData({
-          name: '',
-          description: '',
-          price: '',
-          stock: '',
-          category: '',
-          brand: '',
-          image: null,
-          image_url: null
-        });
+        const result = await createProduct(productData);
+
+        if(result.success){
+          setFormData({
+           name: '',
+           description: '',
+           price: '',
+           stock: '',
+           category: '',
+           brand: '',
+           image: null,
+           image_url: null
+         });
+         
+         toast.success('Product added successfully!');
+        }
         setImagePreview(null);
         setErrors({});
         
-        toast.success('Product added successfully!', {
-          duration: 3000,
-          position: 'top-center'
-        });
         
-        onClose();
+        if(onProductAdded) {
+          onProductAdded(result.products)
+          onClose();
+        }
+        else {
+          toast.error(result.error || 'Failed to add product. Please try again.');
+        }
+
+        
       } catch (error) {
         console.error('Error submitting form:', error);
         toast.error('Failed to add product. Please try again.');
@@ -190,7 +196,7 @@ const AddProduct = ({ isOpen, onClose, onSubmit }) => {
             <input
               type="text"
               value={formData.name}
-              onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+              onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value.trim() }))}
               className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 ${
                 errors.name ? 'border-red-500' : 'border-gray-300'
               }`}
@@ -216,7 +222,7 @@ const AddProduct = ({ isOpen, onClose, onSubmit }) => {
             </label>
             <textarea
               value={formData.description}
-              onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
+              onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value.trim() }))}
               className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 ${
                 errors.description ? 'border-red-500' : 'border-gray-300'
               }`}
@@ -313,7 +319,7 @@ const AddProduct = ({ isOpen, onClose, onSubmit }) => {
               <input
                 type="text"
                 value={formData.brand}
-                onChange={(e) => setFormData(prev => ({ ...prev, brand: e.target.value }))}
+                onChange={(e) => setFormData(prev => ({ ...prev, brand: e.target.value.trim() }))}
                 className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 ${
                   errors.brand ? 'border-red-500' : 'border-gray-300'
                 }`}

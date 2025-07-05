@@ -15,8 +15,10 @@ SECRET_KEY = 'django-insecure-iy)^i-m@_pdky8omo&-m=c$#k-#w4brcn!g&+$q^s9^#q)iok!
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = [
+    'localhost',
+    'gadgethunt.onrender.com',  
+]
 
 # Application definition
 
@@ -152,7 +154,10 @@ STATIC_URL = 'static/'
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
-    "https://gadget-hunt.vercel.app/"  # Allow frontend running on localhost
+    "https://gadget-hunt.vercel.app"  # Allow frontend running on localhost
+]
+CSRF_TRUSTED_ORIGINS = [
+    "https://gadget-hunt.vercel.app"
 ]
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
