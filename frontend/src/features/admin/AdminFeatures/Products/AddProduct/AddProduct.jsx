@@ -101,7 +101,7 @@ const AddProduct = ({ isOpen, onClose, onProductAdded }) => {
         
         
         if(onProductAdded) {
-          onProductAdded(result.products)
+          onProductAdded(result.product)
           onClose();
         }
         else {
@@ -196,7 +196,7 @@ const AddProduct = ({ isOpen, onClose, onProductAdded }) => {
             <input
               type="text"
               value={formData.name}
-              onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value.trim() }))}
+              onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
               className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 ${
                 errors.name ? 'border-red-500' : 'border-gray-300'
               }`}
@@ -222,7 +222,7 @@ const AddProduct = ({ isOpen, onClose, onProductAdded }) => {
             </label>
             <textarea
               value={formData.description}
-              onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value.trim() }))}
+              onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
               className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 ${
                 errors.description ? 'border-red-500' : 'border-gray-300'
               }`}
@@ -241,7 +241,7 @@ const AddProduct = ({ isOpen, onClose, onProductAdded }) => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Price ($) <span className="text-red-500" >*</span>
+                Price (৳) <span className="text-red-500" >*</span>
               </label>
               <input
                 type="number"
@@ -319,7 +319,7 @@ const AddProduct = ({ isOpen, onClose, onProductAdded }) => {
               <input
                 type="text"
                 value={formData.brand}
-                onChange={(e) => setFormData(prev => ({ ...prev, brand: e.target.value.trim() }))}
+                onChange={(e) => setFormData(prev => ({ ...prev, brand: e.target.value }))}
                 className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 ${
                   errors.brand ? 'border-red-500' : 'border-gray-300'
                 }`}

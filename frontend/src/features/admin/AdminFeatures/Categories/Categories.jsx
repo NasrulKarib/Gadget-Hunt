@@ -1,43 +1,10 @@
-import React, { useState } from 'react';
-import { Plus, Search, Filter, Edit, Trash, MoreVertical, AlertCircle, Check, X } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Plus, Search, Filter, Edit, Trash, MoreVertical, AlertCircle, Check, X,Loader2 } from 'lucide-react';
 import { toast } from 'react-toastify';
+import {fetchCategories} from '../../../../services/categoryService'
 
 const Categories = () => {
-  const [categories, setCategories] = useState([
-    {
-      id: 1,
-      name: 'Smartphones',
-      description: 'Latest mobile devices and accessories',
-      status: 'Active',
-      productsCount: 45,
-      createdAt: '2024-01-15'
-    },
-    {
-      id: 2,
-      name: 'Laptops',
-      description: 'High-performance computing devices',
-      status: 'Active',
-      productsCount: 32,
-      createdAt: '2024-01-20'
-    },
-    {
-      id: 3,
-      name: 'Tablets',
-      description: 'Portable touchscreen devices',
-      status: 'Active',
-      productsCount: 18,
-      createdAt: '2024-02-01'
-    },
-    {
-      id: 4,
-      name: 'Accessories',
-      description: 'Tech accessories and peripherals',
-      status: 'Inactive',
-      productsCount: 67,
-      createdAt: '2024-02-05'
-    }
-  ]);
-
+  const [categories, setCategories] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedItems, setSelectedItems] = useState([]);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -45,11 +12,30 @@ const Categories = () => {
   const [formData, setFormData] = useState({
     name: '',
     description: '',
-    status: 'Active'
   });
-  const [errors, setErrors] = useState({});
+  const [errors, setErrors] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [loading, setLoading] = useState(true);
 
+  useEffect(()=>{
+    loadCategories()
+  },[])
+
+  const loadCategories = async()=>{
+    setLoading(true);
+    setErrors(null);
+
+    const response = await fetchCategories();
+    const {success, categories} = response;
+    if(success){
+      setCategories(categories);
+    }else{
+      setErrors(response.error)
+      toast.error('Failed to load products');
+    }
+
+    setLoading(false);
+  }
   const validateForm = () => {
     const newErrors = {};
 
@@ -63,10 +49,6 @@ const Categories = () => {
 
     if (formData.description && formData.description.length > 200) {
       newErrors.description = 'Description must be less than 200 characters';
-    }
-
-    if (!formData.status) {
-      newErrors.status = 'Status is required';
     }
 
     setErrors(newErrors);
@@ -145,7 +127,7 @@ const Categories = () => {
       description: '',
       status: 'Active'
     });
-    setErrors({});
+    setErrors(null);
   };
 
   const handleSelectAll = (e) => {
@@ -164,16 +146,7 @@ const Categories = () => {
     }
   };
 
-  const getStatusColor = (status) => {
-    switch (status.toLowerCase()) {
-      case 'active':
-        return 'bg-green-100 text-green-800';
-      case 'inactive':
-        return 'bg-gray-100 text-gray-800';
-      default:
-        return 'bg-gray-100 text-gray-800';
-    }
-  };
+ 
 
   const filteredCategories = categories.filter(category =>
     category.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -196,53 +169,7 @@ const Categories = () => {
         </button>
       </div>
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
-        <div className="bg-white p-6 rounded-lg shadow-sm">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-500">Total Categories</p>
-              <h3 className="text-2xl font-bold">{categories.length}</h3>
-            </div>
-            <div className="p-3 bg-blue-100 rounded-full">
-              <Filter className="text-blue-600" size={24} />
-            </div>
-          </div>
-        </div>
-        <div className="bg-white p-6 rounded-lg shadow-sm">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-500">Active Categories</p>
-              <h3 className="text-2xl font-bold">{categories.filter(cat => cat.status === 'Active').length}</h3>
-            </div>
-            <div className="p-3 bg-green-100 rounded-full">
-              <Check className="text-green-600" size={24} />
-            </div>
-          </div>
-        </div>
-        <div className="bg-white p-6 rounded-lg shadow-sm">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-500">Total Products</p>
-              <h3 className="text-2xl font-bold">{categories.reduce((sum, cat) => sum + cat.productsCount, 0)}</h3>
-            </div>
-            <div className="p-3 bg-orange-100 rounded-full">
-              <Plus className="text-orange-600" size={24} />
-            </div>
-          </div>
-        </div>
-        <div className="bg-white p-6 rounded-lg shadow-sm">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-500">Inactive Categories</p>
-              <h3 className="text-2xl font-bold">{categories.filter(cat => cat.status === 'Inactive').length}</h3>
-            </div>
-            <div className="p-3 bg-gray-100 rounded-full">
-              <X className="text-gray-600" size={24} />
-            </div>
-          </div>
-        </div>
-      </div>
+
 
       {/* Filters and Search */}
       <div className="bg-white p-4 rounded-lg shadow-sm mb-6">
@@ -267,75 +194,74 @@ const Categories = () => {
       {/* Categories Table */}
       <div className="bg-white rounded-lg shadow-sm">
         <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead>
-              <tr className="border-b">
-                <th className="py-4 px-4">
-                  <input
-                    type="checkbox"
-                    checked={selectedItems.length === filteredCategories.length && filteredCategories.length > 0}
-                    onChange={handleSelectAll}
-                    className="rounded text-orange-500 focus:ring-orange-500"
-                  />
-                </th>
-                <th className="text-left py-4 px-4">Category Name</th>
-                <th className="text-left py-4 px-4">Description</th>
-                <th className="text-left py-4 px-4">Products</th>
-                <th className="text-left py-4 px-4">Status</th>
-                <th className="text-left py-4 px-4">Created</th>
-                <th className="text-left py-4 px-4">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredCategories.map((category) => (
-                <tr key={category.id} className="border-b last:border-b-0 hover:bg-gray-50">
-                  <td className="py-4 px-4">
+          {loading ? (
+            <div className="flex items-center justify-center py-20">
+              <Loader2 className="w-8 h-8 animate-spin text-orange-500" />
+              <span className="ml-3 text-gray-600">Loading categories...</span>
+            </div>
+          ) : (
+            <table className="w-full">
+              <thead>
+                <tr className="border-b">
+                  <th className="py-4 px-4">
                     <input
                       type="checkbox"
-                      checked={selectedItems.includes(category.id)}
-                      onChange={() => handleSelectItem(category.id)}
+                      checked={selectedItems.length === filteredCategories.length && filteredCategories.length > 0}
+                      onChange={handleSelectAll}
                       className="rounded text-orange-500 focus:ring-orange-500"
                     />
-                  </td>
-                  <td className="py-4 px-4">
-                    <div className="font-medium">{category.name}</div>
-                  </td>
-                  <td className="py-4 px-4">
-                    <div className="text-gray-600 max-w-xs truncate">{category.description}</div>
-                  </td>
-                  <td className="py-4 px-4">{category.productsCount}</td>
-                  <td className="py-4 px-4">
-                    <span className={`px-3 py-1 rounded-full text-sm ${getStatusColor(category.status)}`}>
-                      {category.status}
-                    </span>
-                  </td>
-                  <td className="py-4 px-4">{category.createdAt}</td>
-                  <td className="py-4 px-4">
-                    <div className="flex items-center gap-2">
-                      <button 
-                        onClick={() => handleEdit(category)}
-                        className="p-1 hover:bg-gray-100 rounded"
-                      >
-                        <Edit size={18} className="text-gray-500" />
-                      </button>
-                      <button 
-                        onClick={() => handleDelete(category.id)}
-                        className="p-1 hover:bg-gray-100 rounded"
-                      >
-                        <Trash size={18} className="text-red-500" />
-                      </button>
-                      <button className="p-1 hover:bg-gray-100 rounded">
-                        <MoreVertical size={18} className="text-gray-500" />
-                      </button>
-                    </div>
-                  </td>
+                  </th>
+                  <th className="text-left py-4 px-4">Id</th>
+                  <th className="text-left py-4 px-4">Category Name</th>
+                  <th className="text-left py-4 px-4">Description</th>
+                  <th className="text-left py-4 px-4">Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {filteredCategories.map((category) => (
+                  <tr key={category.id} className="border-b last:border-b-0 hover:bg-gray-50">
+                    <td className="py-4 px-4">
+                      <input
+                        type="checkbox"
+                        checked={selectedItems.includes(category.id)}
+                        onChange={() => handleSelectItem(category.id)}
+                        className="rounded text-orange-500 focus:ring-orange-500"
+                      />
+                    </td>
+                    <td className="py-4 px-4">{category.id}</td>
+                    <td className="py-4 px-4">
+                      <div className="font-medium">{category.name}</div>
+                    </td>
+                    <td className="py-4 px-4">
+                      <div className="text-gray-600 max-w-xs truncate">{category.description}</div>
+                    </td>
+                    <td className="py-4 px-4">
+                      <div className="flex items-center gap-2">
+                        <button 
+                          onClick={() => handleEdit(category)}
+                          className="p-1 hover:bg-gray-100 rounded"
+                        >
+                          <Edit size={18} className="text-gray-500" />
+                        </button>
+                        <button 
+                          onClick={() => handleDelete(category.id)}
+                          className="p-1 hover:bg-gray-100 rounded"
+                        >
+                          <Trash size={18} className="text-red-500" />
+                        </button>
+                        <button className="p-1 hover:bg-gray-100 rounded">
+                          <MoreVertical size={18} className="text-gray-500" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
         </div>
 
-        {filteredCategories.length === 0 && (
+        {!loading && filteredCategories.length === 0 && (
           <div className="text-center py-12">
             <p className="text-gray-500">No categories found</p>
           </div>

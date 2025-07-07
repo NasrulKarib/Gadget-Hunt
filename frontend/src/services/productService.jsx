@@ -1,14 +1,4 @@
-import axios from 'axios'
-
-const API_BASE_URL = 'http://127.0.0.1:8000'
-
-const api = axios.create({
-    baseURL: API_BASE_URL,
-    headers: {
-        'Content-Type': 'application/json'
-    },
-    withCredentials: true
-})
+import { api } from './BaseAPI'
 
 // Get all products
 
@@ -16,7 +6,7 @@ export const fetchProducts = async()=>{
     try{
         const response = await api.get('/api/products/')
 
-        const tranformedProducts = response.data.products.map(product=>({
+        const transformedProducts = response.data.products.map(product=>({
             id: product.uid,
             name: product.name,
             price: parseFloat(product.price),
@@ -27,19 +17,21 @@ export const fetchProducts = async()=>{
             image_url: product.image_url
         }));
 
-        return {success: true, products: tranformedProducts};
+        return {success: true, products: transformedProducts};
     } catch(error){
         console.error('Error fetching products:', error);
-        error: error.response?.data?.error || error.message || 'Network error' 
+        return { 
+            success: false,
+            error: error.response?.data?.error || error.message || 'Network error' 
+        };
     }
 }
 
 export const createProduct = async(productData)=>{
     try{
         const response = await api.post('/api/products/',productData)
-        console.log(response.data);
         
-        const tranformedProduct = {
+        const transformedProduct = {
             id: response.data.product.uid,
             name: response.data.product.name,
             price: parseFloat(response.data.product.price),
@@ -51,9 +43,9 @@ export const createProduct = async(productData)=>{
         }
        
 
-        return {success: true, products: tranformedProduct};
+        return {success: true, product: transformedProduct};
     } catch(error){
-        console.error('Error fetching products:', error);
+        console.error('Error fetching product:', error);
         return { 
             success: false, 
             error: error.response?.data?.error || error.message || 'Network error' 
