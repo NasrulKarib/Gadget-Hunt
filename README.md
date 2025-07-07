@@ -16,7 +16,7 @@
 
 GadgetHunt ensures a smooth and efficient shopping experience for tech enthusiasts while providing sellers with powerful tools to manage their inventory.
 
-**Live Demo**: will be available soon..
+**Live Demo**: [Frontend](https://gadget-hunt.vercel.app/)
 
 ## Technologies Used
 

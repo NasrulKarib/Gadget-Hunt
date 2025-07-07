@@ -1,9 +1,9 @@
 import {useState} from 'react';
 import { X, Upload, AlertCircle, Loader2} from 'lucide-react';
 import { toast } from 'react-toastify';
+import {createProduct} from '../../../../../services/productService';
 
-
-const AddProduct = ({ isOpen, onClose, onSubmit }) => {
+const AddProduct = ({ isOpen, onClose, onProductAdded }) => {
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -80,29 +80,35 @@ const AddProduct = ({ isOpen, onClose, onSubmit }) => {
           image_url: imageUrl
         };
         
-        console.log('Product Data:', productData);
-        onSubmit(productData);
-        
-        // Reset form
-        setFormData({
-          name: '',
-          description: '',
-          price: '',
-          stock: '',
-          category: '',
-          brand: '',
-          image: null,
-          image_url: null
-        });
+        const result = await createProduct(productData);
+
+        if(result.success){
+          setFormData({
+           name: '',
+           description: '',
+           price: '',
+           stock: '',
+           category: '',
+           brand: '',
+           image: null,
+           image_url: null
+         });
+         
+         toast.success('Product added successfully!');
+        }
         setImagePreview(null);
         setErrors({});
         
-        toast.success('Product added successfully!', {
-          duration: 3000,
-          position: 'top-center'
-        });
         
-        onClose();
+        if(onProductAdded) {
+          onProductAdded(result.product)
+          onClose();
+        }
+        else {
+          toast.error(result.error || 'Failed to add product. Please try again.');
+        }
+
+        
       } catch (error) {
         console.error('Error submitting form:', error);
         toast.error('Failed to add product. Please try again.');
@@ -235,7 +241,7 @@ const AddProduct = ({ isOpen, onClose, onSubmit }) => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Price ($) <span className="text-red-500" >*</span>
+                Price (৳) <span className="text-red-500" >*</span>
               </label>
               <input
                 type="number"

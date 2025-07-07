@@ -1,55 +1,37 @@
-import  { useState } from 'react';
-import { Plus, Search, Filter, MoreVertical, Edit, Trash, X, Upload, AlertCircle } from 'lucide-react';
+import  { useState,useEffect} from 'react';
+import { Plus, Search, Filter, MoreVertical, Edit, Trash, Loader2 } from 'lucide-react';
 import { toast } from "react-toastify";
 import AddProduct from './AddProduct/AddProduct';
-
+import {fetchProducts} from '../../../../services/productService'
 
 const Products = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedItems, setSelectedItems] = useState([]);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [products, setProducts] = useState([
-    {
-      id: 1,
-      name: 'iPhone 15 Pro',
-      sku: 'IP15P-128-BLK',
-      price: 999.99,
-      stock: 50,
-      category: 'Phones',
-      brand: 'Apple',
-      status: 'Active'
-    },
-    {
-      id: 2,
-      name: 'MacBook Pro M3',
-      sku: 'MBP-M3-512-SG',
-      price: 1999.99,
-      stock: 25,
-      category: 'Laptops',
-      brand: 'Apple',
-      status: 'Active'
-    },
-    {
-      id: 3,
-      name: 'AirPods Pro',
-      sku: 'APP-2-WHT',
-      price: 249.99,
-      stock: 100,
-      category: 'Accessories',
-      brand: 'Apple',
-      status: 'Low Stock'
-    },
-    {
-      id: 4,
-      name: 'iPad Air',
-      sku: 'IPA-256-SG',
-      price: 599.99,
-      stock: 0,
-      category: 'Tablets',
-      brand: 'Apple',
-      status: 'Out of Stock'
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(()=>{
+    loadProducts();
+  },[])
+
+  const loadProducts = async()=>{
+    setLoading(true);
+    setError(null);
+
+    const response = await fetchProducts();
+    const {success, products} = response;
+    if(success){
+      setProducts(products);
+    } else{
+      setError(response.error)
+      toast.error('Failed to load products');
     }
-  ]);
+
+    setLoading(false);
+  }
+
 
   const getStatusColor = (status) => {
     switch (status.toLowerCase()) {
@@ -81,10 +63,10 @@ const Products = () => {
   };
 
   const handleAddProduct = (productData) => {
+    console.log(productData);
     const newProduct = {
       ...productData,
-      sku: `${productData.brand.substring(0, 3).toUpperCase()}-${Date.now()}`,
-      status: productData.stock > 15 ? 'Active' : productData.stock > 5 ? 'Low Stock' : 'Out of Stock'
+      status: productData.stock > 5 ? 'Active' : productData.stock > 0 ? 'Low Stock' : 'Out of Stock'
     };
     
     setProducts(prev => [newProduct, ...prev]);
@@ -105,7 +87,10 @@ const Products = () => {
   return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Products</h1>
+        <div>
+          <h1 className="text-2xl font-bold">Products</h1>
+          <p className="text-gray-500">Manage products and their settings</p>
+        </div>
         <button 
           onClick={() => setIsAddModalOpen(true)}
           className="bg-orange-500 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-orange-600 transition-colors"
@@ -136,7 +121,15 @@ const Products = () => {
       </div>
 
       {/* Products Table */}
-      <div className="bg-white rounded-lg shadow-sm">
+      {loading ? (
+        <div className="bg-white rounded-lg shadow-sm p-8">
+          <div className="flex items-center justify-center py-20">
+            <Loader2 className="w-8 h-8 animate-spin text-orange-500" />
+            <span className="ml-3 text-gray-600">Loading products...</span>
+          </div>
+        </div>
+      ) : (
+        <div className="bg-white rounded-lg shadow-sm">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
@@ -150,8 +143,7 @@ const Products = () => {
                   />
                 </th>
                 <th className="text-left py-4 px-4">Product</th>
-                <th className="text-left py-4 px-4">SKU</th>
-                <th className="text-left py-4 px-4">Price</th>
+                <th className="text-left py-4 px-4">Price(৳)</th>
                 <th className="text-left py-4 px-4">Stock</th>
                 <th className="text-left py-4 px-4">Category</th>
                 <th className="text-left py-4 px-4">Brand</th>
@@ -171,8 +163,7 @@ const Products = () => {
                     />
                   </td>
                   <td className="py-4 px-4 font-medium">{product.name}</td>
-                  <td className="py-4 px-4">{product.sku}</td>
-                  <td className="py-4 px-4">${product.price}</td>
+                  <td className="py-4 px-4">{product.price}</td>
                   <td className="py-4 px-4">{product.stock}</td>
                   <td className="py-4 px-4">{product.category}</td>
                   <td className="py-4 px-4">{product.brand}</td>
@@ -209,12 +200,13 @@ const Products = () => {
           </div>
         )}
       </div>
+      )}
 
       {/* Add Product Modal */}
       <AddProduct
         isOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}
-        onSubmit={handleAddProduct}
+        onProductAdded={handleAddProduct}
       />
     </div>
   );

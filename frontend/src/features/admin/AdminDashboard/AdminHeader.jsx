@@ -57,10 +57,7 @@ const AdminHeader = () => {
     sessionStorage.clear();
     
     // Show success message
-    toast.success('Logged out successfully!', {
-      duration: 3000,
-      position: 'top-center'
-    });
+    toast.success('Logged out successfully!');
     
     // Redirect to home page after a short delay
     setTimeout(() => {

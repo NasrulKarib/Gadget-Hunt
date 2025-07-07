@@ -14,12 +14,12 @@ import ProductDetails from '../features/products/ProductDetails'
 import BrandMarquee from '../components/BrandMarquee';
 import UserProfile from '../features/user/UserProfile';
 import Admin from '../features/admin/AdminDashboard/AdminDashboard';
-import Overview from '../features/admin/AdminMenus/Overviews/Overview';
-import Products from '../features/admin/AdminMenus/Products/Products';
-import Profile from '../features/admin/AdminMenus/Profile/Profile';
-import Categories from '../features/admin/AdminMenus/Categories/Categories';
-import Orders from '../features/admin/AdminMenus/Orders/Orders';
-import Customers from '../features/admin/AdminMenus/Customers/Customers'
+import Overview from '../features/admin/AdminFeatures/Overviews/Overview';
+import Products from '../features/admin/AdminFeatures/Products/Products';
+import Profile from '../features/admin/AdminFeatures/Profile/Profile';
+import Categories from '../features/admin/AdminFeatures/Categories/Categories';
+import Orders from '../features/admin/AdminFeatures/Orders/Orders';
+import Customers from '../features/admin/AdminFeatures/Customers/Customers'
 import Protected from '../features/auth/Protected'
 
 const HomePage = () => (

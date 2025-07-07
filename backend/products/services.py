@@ -11,6 +11,15 @@ class ProductService:
     @staticmethod
     def create_product(data):
         try:
+            if data:
+                try:
+                    category = Categories.objects.get(name=data['category'])
+                    data['category'] = category.id
+                except Categories.DoesNotExist:
+                    return False, {
+                        'error': 'Category does not exist'
+                    }, status.HTTP_400_BAD_REQUEST
+                
             serializer = ProductCreateSerializer(data = data)
             
             if not serializer.is_valid():
