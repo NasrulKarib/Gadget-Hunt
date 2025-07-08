@@ -4,6 +4,7 @@ from .models import Products, Categories
 from .serializers import ProductCreateSerializer, ProductResponseSerializer, CategorySerializer
 import logging
 
+
 logger = logging.getLogger(__name__)
 
 class ProductService:
@@ -46,7 +47,7 @@ class ProductService:
         try:
             queryset = Products.objects.select_related('category').all()
             serializer = ProductResponseSerializer(queryset, many=True)
-
+            
             return True, {
                 'products': serializer.data
             }, status.HTTP_200_OK
@@ -75,4 +76,21 @@ class ProductService:
             logger.error(f"Error fetching product with uid {uid}: {e}")
             return False, {
                 'error': 'Failed to fetch product'
+            }, status.HTTP_500_INTERNAL_SERVER_ERROR
+        
+class CategoryService:
+
+    def get_all_categories():
+        try:
+            categories = Categories.objects.all()
+            serializer = CategorySerializer(categories, many = True)
+
+            return True,{
+                'categories': serializer.data
+            }, status.HTTP_200_OK
+        
+        except Exception as e:
+            logger.error(f"Error fetching categories: {e}")
+            return False, {
+                'error': 'Failed to fetch categories'
             }, status.HTTP_500_INTERNAL_SERVER_ERROR
