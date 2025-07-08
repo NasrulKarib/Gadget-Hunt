@@ -12,7 +12,7 @@ class UpdateAccessTokenMiddleware:
                 value=request._new_access_token,
                 httponly=True,
                 secure=True,
-                samesite='Strict',
+                samesite='None',
                 max_age=3600
             )
 

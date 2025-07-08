@@ -15,12 +15,36 @@ class Users(models.Model):
     role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='Customer')
     created_at = models.DateTimeField(auto_now_add=True)
 
+     # ✅ ADD: Django-compatible properties
+    is_active = models.BooleanField(default=True)
+    is_staff = models.BooleanField(default=False)
+    is_superuser = models.BooleanField(default=False)
+
+    USERNAME_FIELD = 'email'  # Field used for authentication
+    REQUIRED_FIELDS = ['name'] 
+
     def __str__(self):
         return self.email
     
+    # ✅ ADD: Required properties for Django auth
     @property
     def is_authenticated(self):
         return True
+    
+    @property
+    def is_anonymous(self):
+        return False
+    
+    def get_username(self):
+        return self.email
+    
+    # ✅ ADD: Required for permissions
+    def has_perm(self, perm, obj=None):
+        return self.is_staff
+    
+    def has_module_perms(self, app_label):
+        return self.is_staff
+    
     
     class Meta:
         db_table = '"GadgetHunt"."users"'

@@ -13,11 +13,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-iy)^i-m@_pdky8omo&-m=c$#k-#w4brcn!g&+$q^s9^#q)iok!'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = [
+    'gadgethunt.onrender.com',
     'localhost',
-    'gadgethunt.onrender.com',  
+    '127.0.0.1',
 ]
 
 # Application definition
@@ -34,6 +35,8 @@ INSTALLED_APPS = [
     'users',
     'products',
     'orders',
+    'notifications',
+    'channels',
     'backend',
     'corsheaders',
     'drf_yasg'
@@ -70,8 +73,16 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'backend.wsgi.application'
+ASGI_APPLICATION = 'backend.asgi.application'
 
-
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('127.0.0.1', 6379)],
+        },
+    },
+}
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
@@ -91,15 +102,12 @@ DATABASES = {
         'SCHEMAS' : ['GadgetHunt']
     }
 }
-
+AUTH_USER_MODEL = 'users.Users'
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'users.authentication.CookieJWTAuthentication',
         'rest_framework_simplejwt.authentication.JWTAuthentication',
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
-        'rest_framework.authentication.BasicAuthentication',
     ),
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.AllowAny',
@@ -154,11 +162,23 @@ STATIC_URL = 'static/'
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
+    "http://127.0.0.1:5173",
     "https://gadget-hunt.vercel.app"  # Allow frontend running on localhost
 ]
-CSRF_TRUSTED_ORIGINS = [
-    "https://gadget-hunt.vercel.app"
+
+CORS_ALLOW_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+    'cookie',  
 ]
+
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 

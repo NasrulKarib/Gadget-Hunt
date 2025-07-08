@@ -14,7 +14,6 @@ import uuid
 # Create your views here.
 class SignupView(APIView):
 
-
     @swagger_auto_schema(
         operation_description="Register a new user and return JWT tokens.",
         request_body=openapi.Schema(
@@ -67,6 +66,7 @@ class SignupView(APIView):
         serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
             user = serializer.save() # Deserialize the data and save it to the database
+            print(user)
             response = Response({
                 'user': serializer.data
             },status=status.HTTP_201_CREATED)
@@ -123,9 +123,10 @@ class LoginView(APIView):
         serializer = UserLoginSerializer(data=request.data)
         if serializer.is_valid():
             user = serializer.validated_data['user']
+            print(user)
             refresh = RefreshToken.for_user(user)
             refresh["role"] = user.role
-
+    
             response =  Response({
                 "message": "Login successful",
                 "user": { 
@@ -141,16 +142,17 @@ class LoginView(APIView):
                 value= str(refresh.access_token),
                 httponly=True,
                 secure=True,
-                samesite= 'Strict',
-                max_age= 3600
+                samesite= 'None',
+                max_age= 3600,
             )
+
             response.set_cookie(
                 key= 'refresh_token',
                 value= str(refresh),
                 httponly=True,
                 secure=True,
-                samesite= 'Strict',
-                max_age= 604800
+                samesite= 'None',
+                max_age= 604800,
             )
             return response 
 
@@ -333,7 +335,6 @@ class AdminDashboardView(APIView):
                 
 class FirebaseLoginView(APIView):
 
-
     @swagger_auto_schema(
         operation_description="Authenticate user with Firebase ID token. Sets JWT cookies on success.",
         request_body=openapi.Schema(
@@ -428,23 +429,26 @@ class FirebaseLoginView(APIView):
                 },
             }, status=status.HTTP_200_OK)
 
+            # Find this in FirebaseLoginView.post():
+
+
+            # Change to:
             response.set_cookie(
                 key='access_token',
                 value=str(refresh.access_token),
                 httponly=True,
-                secure=True,
-                samesite='Strict',
+                secure=True,       
+                samesite='None',    
                 max_age=3600
             )
             response.set_cookie(
                 key='refresh_token',
                 value=str(refresh),
                 httponly=True,
-                secure=True,
-                samesite='Strict',
+                secure=True,       
+                samesite='None',    
                 max_age=604800
             )
-
             return response
         
         except auth.InvalidIdTokenError:
@@ -454,7 +458,6 @@ class FirebaseLoginView(APIView):
             return Response({'detail': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
 class FirebaseSignupView(APIView):
-
     def post(self, request):
         # For Firebase, signup and login can be handled similarly
         # since Firebase creates the user on first sign-in
