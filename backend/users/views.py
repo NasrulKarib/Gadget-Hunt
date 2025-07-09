@@ -66,7 +66,6 @@ class SignupView(APIView):
         serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
             user = serializer.save() # Deserialize the data and save it to the database
-            print(user)
             response = Response({
                 'user': serializer.data
             },status=status.HTTP_201_CREATED)
@@ -123,7 +122,6 @@ class LoginView(APIView):
         serializer = UserLoginSerializer(data=request.data)
         if serializer.is_valid():
             user = serializer.validated_data['user']
-            print(user)
             refresh = RefreshToken.for_user(user)
             refresh["role"] = user.role
     
@@ -454,7 +452,6 @@ class FirebaseLoginView(APIView):
         except auth.InvalidIdTokenError:
             return Response({'detail': 'Invalid ID token'}, status=status.HTTP_401_UNAUTHORIZED)
         except Exception as e:
-            print(str(e))
             return Response({'detail': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
 class FirebaseSignupView(APIView):
