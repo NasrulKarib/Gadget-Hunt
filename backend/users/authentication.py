@@ -8,7 +8,6 @@ class CookieJWTAuthentication(BaseAuthentication):
     def authenticate(self,request):
         access_token = request.COOKIES.get('access_token')
         refresh_token = request.COOKIES.get('refresh_token')
-        
 
         if not access_token and not refresh_token:
             return None
@@ -35,4 +34,4 @@ class CookieJWTAuthentication(BaseAuthentication):
             except (InvalidToken, TokenError, Users.DoesNotExist):
                 raise AuthenticationFailed('Refresh token expired. Please log in again.')
     
-        raise AuthenticationFailed('No valid token found.')
+        return None

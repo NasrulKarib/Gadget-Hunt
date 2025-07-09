@@ -1,11 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import {useDispatch} from 'react-redux';
 import {useNavigate} from 'react-router-dom';
+import axios from 'axios';
+import { logout } from '../auth/authSlices';
 import PersonalInfo from './PersonalInfo';
 import OrderHistory from './OrderHistory';
 import AddressManager from './AddressManager';
 import PasswordUpdate from './PasswordUpdate';
 import Sidebar from './Sidebar';
+
+const API_BASE_URL = import.meta.env.VITE_BASE_API_URL;
 
 const UserProfile = () => {
   const dispatch = useDispatch();
@@ -15,7 +19,7 @@ const UserProfile = () => {
   useEffect(()=>{
     const fetchProfile = async ()=>{
       try{
-        const res = await axios.get('http://localhost:8000/api/users/profile/',{
+        const res = await axios.get(`${API_BASE_URL}/api/users/profile/`,{
           withCredentials: true,
         });
       }

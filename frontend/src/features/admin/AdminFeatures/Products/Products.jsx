@@ -87,7 +87,10 @@ const Products = () => {
   return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Products</h1>
+        <div>
+          <h1 className="text-2xl font-bold">Products</h1>
+          <p className="text-gray-500">Manage products and their settings</p>
+        </div>
         <button 
           onClick={() => setIsAddModalOpen(true)}
           className="bg-orange-500 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-orange-600 transition-colors"
@@ -140,7 +143,7 @@ const Products = () => {
                   />
                 </th>
                 <th className="text-left py-4 px-4">Product</th>
-                <th className="text-left py-4 px-4">Price</th>
+                <th className="text-left py-4 px-4">Price(৳)</th>
                 <th className="text-left py-4 px-4">Stock</th>
                 <th className="text-left py-4 px-4">Category</th>
                 <th className="text-left py-4 px-4">Brand</th>
@@ -160,7 +163,7 @@ const Products = () => {
                     />
                   </td>
                   <td className="py-4 px-4 font-medium">{product.name}</td>
-                  <td className="py-4 px-4">${product.price}</td>
+                  <td className="py-4 px-4">{product.price}</td>
                   <td className="py-4 px-4">{product.stock}</td>
                   <td className="py-4 px-4">{product.category}</td>
                   <td className="py-4 px-4">{product.brand}</td>
