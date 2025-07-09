@@ -29,6 +29,7 @@ export const fetchProducts = async()=>{
 
 export const createProduct = async(productData)=>{
     try{
+
         const response = await api.post('/api/products/',productData)
         
         const transformedProduct = {
