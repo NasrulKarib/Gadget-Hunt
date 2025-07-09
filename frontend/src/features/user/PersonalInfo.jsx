@@ -5,6 +5,8 @@ import "react-toastify/dist/ReactToastify.css";
 import { useSelector, useDispatch } from 'react-redux';
 import { setUser } from '../auth/authSlices';
 
+const API_BASE_URL = import.meta.env.VITE_BASE_API_URL;
+
 const PersonalInfo = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -36,7 +38,7 @@ const PersonalInfo = () => {
 
     const fetchProfile = async()=>{
       try{
-        const response = await axios.get('http://localhost:8000/api/users/profile/', 
+        const response = await axios.get(`${API_BASE_URL}/api/users/profile/`, 
           {withCredentials: true}
         );
         const userData = response.data.user;
@@ -83,7 +85,7 @@ const PersonalInfo = () => {
     try {
       const name = `${formData.firstName} ${formData.lastName}`.trim();
       const response = await axios.patch(
-        'http://localhost:8000/api/users/profile/',
+        `${API_BASE_URL}/api/users/profile/`,
         {
           name,
           email: formData.email,

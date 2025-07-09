@@ -1,12 +1,14 @@
 import {createSlice, createAsyncThunk} from '@reduxjs/toolkit';
 import axios from 'axios';
 
+const API_BASE_URL = import.meta.env.VITE_BASE_API_URL;
+
 // Create an async thunk for login
 export const loginUser = createAsyncThunk(
     'auth/loginUser', // action type
     async ({ email, password }, { rejectWithValue }) => {
       try {
-        const response = await axios.post('http://localhost:8000/api/users/login/', {
+        const response = await axios.post(`${API_BASE_URL}/api/users/login/`, {
           email,
           password,
         }, { withCredentials: true });
@@ -24,7 +26,7 @@ export const googleLogin = createAsyncThunk(
     'auth/googleLogin',
     async (idToken, { rejectWithValue }) => {
       try {
-        const response = await axios.post('http://localhost:8000/api/users/firebase-login/', {
+        const response = await axios.post(`${API_BASE_URL}/api/users/firebase-login/`, {
           id_token: idToken,
         }, { withCredentials: true });
         sessionStorage.setItem('user', JSON.stringify(response.data.user));
@@ -36,7 +38,7 @@ export const googleLogin = createAsyncThunk(
     }
   );
   
-const authSlide = createSlice({
+const authSlice = createSlice({
     name: 'auth',
     initialState: {
       user: null,
@@ -87,5 +89,5 @@ const authSlide = createSlice({
     },
   });
 
-export const {setUser, logout} = authSlide.actions;
-export default authSlide.reducer;
+export const {setUser, logout} = authSlice.actions;
+export default authSlice.reducer;
