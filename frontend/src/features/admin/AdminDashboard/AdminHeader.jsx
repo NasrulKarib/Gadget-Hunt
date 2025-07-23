@@ -1,61 +1,31 @@
-import React, { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Bell, Settings, LogOut, X } from 'lucide-react';
+import { useDispatch } from 'react-redux';
+import { logout } from '../../../features/auth/authSlices';
 import { useNavigate } from 'react-router-dom';
-import {toast} from 'react-toastify';
+import { toast } from 'react-toastify';
+import useAdminNotifications from '../../../hooks/useAdminNotifications';
 
 const AdminHeader = () => {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [notifications, setNotifications] = useState([]);
   const [showNotifications, setShowNotifications] = useState(false);
-  const [unreadCount, setUnreadCount] = useState(0);
 
-  // Mock notifications data
-  useEffect(() => {
-    const mockNotifications = [
-      {
-        id: 1,
-        type: 'order',
-        title: 'New Order Received',
-        message: 'Order #40756 - $1,299.99',
-        timestamp: new Date(Date.now() - 5 * 60 * 1000),
-        read: false
-      },
-      {
-        id: 2,
-        type: 'stock',
-        title: 'Low Stock Alert',
-        message: 'iPhone 15 Pro - Only 3 units left',
-        timestamp: new Date(Date.now() - 15 * 60 * 1000),
-        read: false
-      },
-      {
-        id: 3,
-        type: 'user',
-        title: 'New User Registration',
-        message: 'Sarah Johnson joined',
-        timestamp: new Date(Date.now() - 30 * 60 * 1000),
-        read: true
-      },
-      {
-        id: 4,
-        type: 'stock',
-        title: 'Critical Stock Alert',
-        message: 'AirPods Pro - Only 1 unit left',
-        timestamp: new Date(Date.now() - 45 * 60 * 1000),
-        read: false
-      }
-    ];
-
-    setNotifications(mockNotifications);
-    setUnreadCount(mockNotifications.filter(n => !n.read).length);
-
-  
-  }, []);
+  // ✅ Use WebSocket notifications instead of mock data
+const { 
+    notifications, 
+    unreadCount, 
+    isConnected,
+    isLoading, 
+    markAsRead, 
+    clearNotifications,
+    markAllAsRead 
+  } = useAdminNotifications();
 
   const handleLogout = () => {
     // Clear localStorage
     sessionStorage.clear();
-    
+    dispatch(logout());
     // Show success message
     toast.success('Logged out successfully!');
     
@@ -63,24 +33,6 @@ const AdminHeader = () => {
     setTimeout(() => {
       navigate('/');
     }, 1000);
-  };
-
-  const markAsRead = (id) => {
-    setNotifications(prev => 
-      prev.map(notification => 
-        notification.id === id 
-          ? { ...notification, read: true }
-          : notification
-      )
-    );
-    setUnreadCount(prev => Math.max(0, prev - 1));
-  };
-
-  const markAllAsRead = () => {
-    setNotifications(prev => 
-      prev.map(notification => ({ ...notification, read: true }))
-    );
-    setUnreadCount(0);
   };
 
   const getNotificationIcon = (type) => {
@@ -110,16 +62,23 @@ const AdminHeader = () => {
   };
 
   const formatTimestamp = (timestamp) => {
-    const now = new Date();
-    const diff = now - timestamp;
-    const minutes = Math.floor(diff / 60000);
-    const hours = Math.floor(diff / 3600000);
-    const days = Math.floor(diff / 86400000);
+    try {
+      // Handle both string and Date object timestamps
+      const date = typeof timestamp === 'string' ? new Date(timestamp) : timestamp;
+      const now = new Date();
+      const diff = now - date;
+      const minutes = Math.floor(diff / 60000);
+      const hours = Math.floor(diff / 3600000);
+      const days = Math.floor(diff / 86400000);
 
-    if (minutes < 1) return 'Just now';
-    if (minutes < 60) return `${minutes}m ago`;
-    if (hours < 24) return `${hours}h ago`;
-    return `${days}d ago`;
+      if (minutes < 1) return 'Just now';
+      if (minutes < 60) return `${minutes}m ago`;
+      if (hours < 24) return `${hours}h ago`;
+      return `${days} days ago`;
+    } catch (error) {
+      console.error('Error formatting timestamp:', error);
+      return 'Unknown time';
+    }
   };
 
   return (
@@ -128,6 +87,7 @@ const AdminHeader = () => {
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
             <span className="text-xl font-bold text-orange-500">Admin Dashboard</span>
+             
           </div>
           
           <div className="flex items-center space-x-4">

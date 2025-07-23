@@ -9,6 +9,7 @@ import { useDispatch} from 'react-redux';
 import { googleLogin } from './authSlices';
 import { auth, googleProvider } from '../../firebase';
 import { signInWithPopup } from 'firebase/auth';
+import {api} from '../../services/BaseAPI'
 
 const Signup = () => {
   const [formData, setFormData] = useState({
@@ -51,12 +52,13 @@ const Signup = () => {
     setLoading(true);
     setError('');
     try{
-      await axios.post('http://localhost:8000/api/users/signup/', {
+      const response = await api.post('/api/users/signup/', {
         name: formData.name,
         email: formData.email,
         password: formData.password,
-        role: formData.role // Default to 'Customer'
-      },{withCredentials: true});
+        role: formData.role
+      });
+
 
    
       setLoading(false);
