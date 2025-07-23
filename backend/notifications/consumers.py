@@ -6,13 +6,8 @@ from .models import Notification
 
 class NotificationConsumer(AsyncWebsocketConsumer):
     async def connect(self):
-        # Get user from scope (set by AuthMiddlewareStack)
-        self.user = self.scope["user"]
-        
-        # Only allow authenticated admin users
-        if not self.user.is_authenticated or self.user.role != 'Admin':
-            await self.close()
-            return
+        # ✅ Accept connection first, then check if user should receive notifications
+        await self.accept()
             
         # Join admin notifications group
         self.room_group_name = 'admin_notifications'
@@ -22,8 +17,6 @@ class NotificationConsumer(AsyncWebsocketConsumer):
             self.channel_name
         )
         
-        await self.accept()
-        print(f"🔗 Admin {self.user.email} connected to notifications")
 
     async def disconnect(self, close_code):
         # Leave room group
@@ -32,7 +25,6 @@ class NotificationConsumer(AsyncWebsocketConsumer):
                 self.room_group_name,
                 self.channel_name
             )
-            print(f"🔌 Admin {self.user.email} disconnected from notifications")
 
     # Receive message from WebSocket (if needed for future features)
     async def receive(self, text_data):
