@@ -2,12 +2,10 @@ from rest_framework.views import APIView
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.response import Response
 from rest_framework import status
-from django.utils.decorators import method_decorator
-from django.views.decorators.cache import cache_page
-from django.core.cache import cache
 from .services import ProductService, CategoryService
 import logging
 from .permissions import IsAdminUser
+from notifications.services import NotificationService
 
 logger = logging.getLogger(__name__)
 
@@ -22,7 +20,27 @@ class ProductAPIView(APIView):
             }, status=status.HTTP_403_FORBIDDEN)
         
         try:
-            _, data, status_code = ProductService.create_product(request.data)
+            success, data, status_code = ProductService.create_product(request.data)
+            if success and status_code == status.HTTP_201_CREATED:
+                try:
+                    # Get the created product UID from response
+                    product_uid = data.get('product', {}).get('uid')
+                    product_name = data.get('product', {}).get('name', 'Unknown Product')
+                    
+                    if product_uid:
+                        # Trigger notification
+                        NotificationService.create_notification(
+                            title="New Product Added",
+                            message=f"Product '{product_name}' has been successfully added to the inventory",
+                            notification_type="product",
+                            related_object_id=str(product_uid)
+                        )
+                        logger.info(f"Product creation notification sent for: {product_name}")
+                        
+                except Exception as notification_error:
+                    # Don't fail the entire request if notification fails
+                    logger.error(f"Failed to send product creation notification: {notification_error}")
+            
             return Response(data, status=status_code)
 
         except Exception as e:

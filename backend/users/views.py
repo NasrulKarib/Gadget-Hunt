@@ -10,6 +10,10 @@ from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 from firebase_admin import auth
 import uuid
+from notifications.services import NotificationService
+import logging
+
+logger = logging.getLogger(__name__)
 
 # Create your views here.
 class SignupView(APIView):
@@ -64,8 +68,23 @@ class SignupView(APIView):
     
     def post(self, request):
         serializer = UserSerializer(data=request.data)
+        
         if serializer.is_valid():
             user = serializer.save() # Deserialize the data and save it to the database
+            try:
+                NotificationService.create_notification(
+                    title="New User Registered",
+                    message=f"New user '{user.name}' ({user.email}) has registered with role: {user.role}",
+                    notification_type="user",
+                    related_object_id=str(user.id)
+                )
+                logger.info(f"User registration notification sent for: {user.email}")
+                
+            except Exception as notification_error:
+                # Don't fail the registration if notification fails
+                logger.error(f"Failed to send user registration notification: {notification_error}")
+            
+            
             response = Response({
                 'user': serializer.data
             },status=status.HTTP_201_CREATED)
@@ -412,6 +431,20 @@ class FirebaseLoginView(APIView):
                 }
                
             )
+
+            # notification for new Firebase user registration
+            if created:
+                try:
+                    NotificationService.create_notification(
+                        title="New Firebase User Registered",
+                        message=f"New user '{user.name}' ({user.email}) registered via Firebase authentication",
+                        notification_type="user",
+                        related_object_id=str(user.id)
+                    )
+                    logger.info(f"Firebase user registration notification sent for: {user.email}")
+                    
+                except Exception as notification_error:
+                    logger.error(f"Failed to send Firebase registration notification: {notification_error}")
 
             refresh = RefreshToken.for_user(user)
             refresh["role"] = user.role
