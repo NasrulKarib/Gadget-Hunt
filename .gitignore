@@ -21,4 +21,7 @@ backend/users/__pycache__/
 backend/users/tests/__pycache__/
 backend/users/migrations/__pycache__/
 
+backend/notifications/__pycache__/
+backend/notifications/migrations/__pycache__/
+
 
