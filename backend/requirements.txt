@@ -7,7 +7,7 @@ CacheControl==0.14.2
 cachetools==5.5.2
 certifi==2025.1.31
 cffi==1.17.1
-channels==3.0.5
+channels==4.2.0
 channels_redis==4.2.1
 charset-normalizer==3.4.1
 colorama==0.4.6
